@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Blog 1 &middot; My New Hugo Site</title>
+
+		
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" href="/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
+
+		<script src="/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">My New Hugo Site</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        June Park
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-09-15 00:00:00 &#43;0000 UTC">September 15, 2022</time>
+</div>
+
+		<h1 class="post-title">Blog 1</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+
+<p>This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.</p>
+<pre class="r"><code># libraries
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+## ✔ tibble  3.1.6     ✔ dplyr   1.0.8
+## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
+## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(usmap)</code></pre>
+<pre><code>## Warning: package &#39;usmap&#39; was built under R version 4.0.5</code></pre>
+<pre class="r"><code>library(rmapshaper)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;geojsonlint&#39;:
+##   method         from 
+##   print.location dplyr</code></pre>
+<pre class="r"><code>library(sf)</code></pre>
+<pre><code>## Warning: package &#39;sf&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## Linking to GEOS 3.9.1, GDAL 3.4.0, PROJ 8.1.1; sf_use_s2() is TRUE</code></pre>
+<pre class="r"><code>library(blogdown)</code></pre>
+<pre class="r"><code># data
+housepartyvote &lt;- read_csv(&quot;house party vote share by district 1948-2020.csv&quot;)</code></pre>
+<pre><code>## Rows: 16067 Columns: 31
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (16): Office, State, Area, RepCandidate, RepStatus, DemCandidate, DemSta...
+## dbl (14): raceYear, RepVotes, DemVotes, ThirdVotes, OtherVotes, PluralityVot...
+## lgl  (1): CensusPop
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code># Dataset of 2018 voteshare margin
+house2018 &lt;- housepartyvote %&gt;%
+  filter(raceYear == 2018) %&gt;%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %&gt;%
+  # summarize party vote share by state
+  group_by(State) %&gt;%
+  # create Votemargin
+  mutate(Votemargin = (sum(RepVotes - DemVotes))/sum(RepVotes + DemVotes)) %&gt;%
+  rename(state = State)
+
+# Plot of 2018 voteshare margin
+plot_usmap(data = house2018, 
+           regions = &quot;states&quot;, 
+           values = &quot;Votemargin&quot;,
+           labels = TRUE) +
+  scale_fill_gradient2(low = &quot;skyblue3&quot;, 
+                       mid = &quot;white&quot;,
+                       high = &quot;firebrick3&quot;, 
+                       name = &quot;Two-party Voteshare Margin&quot;) +
+  labs(title = &quot;2018 Two-Party Voteshare Margin&quot;) +
+  theme_void()</code></pre>
+<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-09-15 00:57:30.641608 -0400 EDT m=&#43;0.078316133">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

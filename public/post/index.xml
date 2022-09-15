@@ -6,14 +6,15 @@
     <description>Recent content in Posts on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 14 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Blog #1</title>
-      <link>http://example.org/post/2022-09-14-blog-1/</link>
-      <pubDate>Wed, 14 Sep 2022 00:00:00 +0000</pubDate>
+      <title>Blog 1</title>
+      <link>http://example.org/post/2022-09-15-blog-1/blog1/</link>
+      <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/2022-09-14-blog-1/</guid>
-      <description>Hello world!</description>
+      <guid>http://example.org/post/2022-09-15-blog-1/blog1/</guid>
+      <description>This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.
+# libraries library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.3.5 ✔ purrr 0.3.4 ## ✔ tibble 3.1.6 ✔ dplyr 1.0.8 ## ✔ tidyr 1.2.0 ✔ stringr 1.4.0 ## ✔ readr 2.1.2 ✔ forcats 0.5.1 ## Warning: package &amp;#39;tidyr&amp;#39; was built under R version 4.</description>
     </item>
     
   </channel>
