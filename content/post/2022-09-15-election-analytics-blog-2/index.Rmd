@@ -1,0 +1,80 @@
+---
+title: 'Election Analytics: Blog 2'
+author: "June Park"
+date: '2022-09-15'
+slug: []
+categories: []
+tags: []
+---
+
+```{r, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+
+# data
+house <- read_csv("house_popvote_seats.csv")
+cpi_monthly <- read_csv("CPI_monthly.csv")
+rdi_quarterly <- read_csv("RDI_quarterly.csv")
+gdp_quarterly <- read_csv("GDP_quarterly.csv")
+```
+
+```{r, include = FALSE}
+# columns to use aka OUTCOME VARIABLES
+# R_majorvote_pct, D_majorvote_pct, H_incumbent_party_majorvote_pct
+# seat change: (latest year # of seats) - (previous year # of seats)
+
+# cleaning cpi_monthly
+clean_cpi <- cpi_monthly %>% 
+  mutate(year = year(DATE), month = month(DATE)) %>% 
+  filter(year %% 2 == 0 & (month == 9 | month == 10)) %>% 
+  select(-c(DATE)) %>% 
+  pivot_wider(id_cols = year, names_from = month, values_from = CPIAUCSL) %>% 
+  mutate(change_in_cpi = `10` - `9`)
+
+# cleaning rdi_quarterly
+clean_rdi <- rdi_quarterly %>% 
+  filter(quarter_cycle == 8)
+
+# cleaning gdp_quarterly
+clean_gdp <- gdp_quarterly %>% 
+  filter(quarter_cycle == 8)
+
+
+# left join of house and cpi
+house_cpi <- left_join(house, clean_cpi, by = 'year') %>%
+  drop_na() %>%
+  select('year', 'R_majorvote_pct', 'D_majorvote_pct',
+         'H_incumbent_party_majorvote_pct', 'change_in_cpi')
+
+# left join of house, cpi, rdi
+house_cpi_rdi <- left_join(house_cpi, clean_rdi, by = 'year') %>% 
+  drop_na() %>% 
+  select('year', 'R_majorvote_pct', 'D_majorvote_pct',
+         'H_incumbent_party_majorvote_pct', 'change_in_cpi', 
+         'DSPIC_qt','DSPIC_change_pct')
+
+# final cleaned data set with everything
+house_cpi_rdi_gdp <- left_join(house_cpi_rdi, clean_gdp, by = 'year') %>% 
+  drop_na() %>% 
+  select('year', 'R_majorvote_pct', 'D_majorvote_pct',
+         'H_incumbent_party_majorvote_pct', 'change_in_cpi', 
+         'DSPIC_qt','DSPIC_change_pct', 'GDP_growth_qt', 'GDP_growth_pct')
+
+lm1 <- lm(H_incumbent_party_majorvote_pct ~ change_in_cpi + DSPIC_qt + DSPIC_change_pct + GDP_growth_qt + GDP_growth_pct, data = house_cpi_rdi_gdp)
+
+
+stargazer(lm1, type = "text")
+```
+
+
