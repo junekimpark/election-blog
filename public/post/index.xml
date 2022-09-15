@@ -9,14 +9,11 @@
     <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Election Analytics: Blog 1</title>
-      <link>http://example.org/post/2022-09-15-blog-1/blog1/</link>
+      <link>http://example.org/post/2022-09-15-election-analytics-blog-1/</link>
       <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/2022-09-15-blog-1/blog1/</guid>
-      <description>Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.
-This week, I focused on visualization customization of congressional races.
-Map of Republican/Democrat vote-share margin by STATE (2016, 2018):
-The first set of maps represent the two-party vote share margin in the 2016 and 2018 congressional elections.</description>
+      <guid>http://example.org/post/2022-09-15-election-analytics-blog-1/</guid>
+      <description></description>
     </item>
     
   </channel>

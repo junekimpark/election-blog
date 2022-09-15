@@ -2,12 +2,10 @@
 title: 'Election Analytics: Blog 1'
 author: "June Park"
 date: '2022-09-15'
-output:
-  html_document: default
-  pdf_document: default
-categories: []
+output: pdf_document
 tags: []
 slug: []
+categories: []
 ---
 
 Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.
