@@ -6,7 +6,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>Blog 1 &middot; My New Hugo Site</title>
+		<title>Blog 1 - Analysis &middot; My New Hugo Site</title>
 
 		
 		<link rel="stylesheet" href="/css/style.css">
@@ -56,7 +56,7 @@
         <span>on&nbsp;</span><time datetime="2022-09-15 00:00:00 &#43;0000 UTC">September 15, 2022</time>
 </div>
 
-		<h1 class="post-title">Blog 1</h1>
+		<h1 class="post-title">Blog 1 - Analysis</h1>
 <div class="post-line"></div>
 
 		
@@ -65,34 +65,15 @@
 
 
 <p>This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.</p>
-<pre class="r"><code># Plot of 2018 voteshare margin
-plot_usmap(data = house2018, 
-           regions = &quot;states&quot;, 
-           values = &quot;Votemargin&quot;,
-           labels = TRUE) +
-  scale_fill_gradient2(low = &quot;skyblue3&quot;, 
-                       mid = &quot;white&quot;,
-                       high = &quot;firebrick3&quot;, 
-                       name = &quot;Two-party Voteshare Margin&quot;) +
-  labs(title = &quot;2018 Two-Party Voteshare Margin&quot;) +
-  theme_void()</code></pre>
-<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code># Graph
-ggplot() +
-  geom_sf(data = simplified_cd114, mapping = aes(fill = voteshare_margin)) +
-  scale_fill_gradient2(low = &quot;skyblue3&quot;, mid = &quot;white&quot;, high = &quot;firebrick3&quot;, 
-                         name = &quot;Two-Party \nVoteshare Margin&quot;) +
-  theme_void() +
-  labs(title = &quot;Two-Party Vote-Share Margin by District&quot;,
-       subtitle = &quot;2014 Midterm Election&quot;)</code></pre>
-<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-15-blog-1-analysis/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-15-blog-1-analysis/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 
 
 		
 	</div>
 
 	<div class="pagination">
-		<a href="/post/2022-09-15-blog-1-analysis/" class="left arrow">&#8592;</a>
+		<a href="/post/2022-09-15-blog-1/blog1/" class="right arrow">&#8594;</a>
 
 		<a href="#" class="top">Top</a>
 	</div>
@@ -102,7 +83,7 @@ ggplot() +
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-09-15 01:18:39.540277 -0400 EDT m=&#43;0.076651914">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-09-15 01:18:39.556997 -0400 EDT m=&#43;0.093372171">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
