@@ -7,4 +7,91 @@ categories: []
 tags: []
 ---
 
-Hello world!
+This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. 
+
+```{r}
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(blogdown)
+```
+
+```{r}
+# data
+housepartyvote <- read_csv("house party vote share by district 1948-2020.csv")
+```
+
+```{r}
+# Dataset of 2018 voteshare margin
+house2018 <- housepartyvote %>%
+  filter(raceYear == 2018) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # create Votemargin
+  mutate(Votemargin = (sum(RepVotes - DemVotes))/sum(RepVotes + DemVotes)) %>%
+  rename(state = State)
+
+# Plot of 2018 voteshare margin
+plot_usmap(data = house2018, 
+           regions = "states", 
+           values = "Votemargin",
+           labels = TRUE) +
+  scale_fill_gradient2(low = "skyblue3", 
+                       mid = "white",
+                       high = "firebrick3", 
+                       name = "Two-party Voteshare Margin") +
+  labs(title = "2018 Two-Party Voteshare Margin") +
+  theme_void()
+```
+
+```{r}
+# load geographic data
+get_congress_map <- function(cong=114) {
+  tmp_file <- tempfile()
+  tmp_dir <- tempdir()
+  zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+  download.file(zp, tmp_file)
+  unzip(zipfile = tmp_file, exdir = tmp_dir)
+  fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+  st_read(fpath)
+}
+
+# load 114th congress
+cd114 <- get_congress_map(114)
+
+district2014 <- housepartyvote %>%
+  filter(raceYear == 2014) %>%
+  select(raceYear, 
+       State, 
+       district_num,
+       RepVotes,
+       DemVotes) %>%
+  mutate(Votemargin = (RepVotes - DemVotes)/(RepVotes + DemVotes)) %>%
+# rename district variable name to match shapefile
+  rename(DISTRICT = district_num,
+         STATENAME = State)
+
+# make DISTRICT in cd114 numeric
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+
+# join election returns with shapefiles
+simplified_cd114 <- cd114 %>% 
+  left_join(district2014, by=c("STATENAME", "DISTRICT")) %>% 
+  filter(!STATENAME %in% c("Alaska", "Hawaii")) %>% 
+  ms_simplify()
+
+# plot of 2014 district
+ggplot() +
+  geom_sf(data = simplified_cd114, mapping = aes(fill = Votemargin)) +
+  scale_fill_gradient2(low = "skyblue3", 
+                       mid = "white",
+                       high = "firebrick3", 
+                       name = "Two-party Voteshare Margin") +
+  theme_void() +
+  labs(title = "2014 Two-Party Voteshare Margin by Distrct")
+```
+
