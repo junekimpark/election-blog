@@ -8,22 +8,14 @@
     <language>en-us</language>
     <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Blog 1</title>
-      <link>http://example.org/post/2022-09-15-blog-1/blog1/</link>
-      <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/post/2022-09-15-blog-1/blog1/</guid>
-      <description> This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.
-# Plot of 2018 voteshare margin plot_usmap(data = house2018, regions = &amp;quot;states&amp;quot;, values = &amp;quot;Votemargin&amp;quot;, labels = TRUE) + scale_fill_gradient2(low = &amp;quot;skyblue3&amp;quot;, mid = &amp;quot;white&amp;quot;, high = &amp;quot;firebrick3&amp;quot;, name = &amp;quot;Two-party Voteshare Margin&amp;quot;) + labs(title = &amp;quot;2018 Two-Party Voteshare Margin&amp;quot;) + theme_void() # Graph ggplot() + geom_sf(data = simplified_cd114, mapping = aes(fill = voteshare_margin)) + scale_fill_gradient2(low = &amp;quot;skyblue3&amp;quot;, mid = &amp;quot;white&amp;quot;, high = &amp;quot;firebrick3&amp;quot;, name = &amp;quot;Two-Party \nVoteshare Margin&amp;quot;) + theme_void() + labs(title = &amp;quot;Two-Party Vote-Share Margin by District&amp;quot;, subtitle = &amp;quot;2014 Midterm Election&amp;quot;) </description>
-    </item>
-    
-    <item>
-      <title>Blog 1 - Analysis</title>
+      <title>Blog 1 - Vote Share Margins of Congressional Elections</title>
       <link>http://example.org/post/2022-09-15-blog-1-analysis/</link>
       <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/post/2022-09-15-blog-1-analysis/</guid>
-      <description>This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.</description>
+      <description>Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.
+This week, I focused on visualization customization of congressional races.
+Map of Republican/Democrat vote-share margin by STATE (2016, 2018): The first set of maps (see above) represent the two-party vote share margin in the 2016 and 2018 congressional elections.</description>
     </item>
     
   </channel>
