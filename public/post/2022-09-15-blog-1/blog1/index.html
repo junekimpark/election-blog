@@ -6,7 +6,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>Blog 1 &middot; My New Hugo Site</title>
+		<title>Election Analytics: Blog 1 &middot; My New Hugo Site</title>
 
 		
 		<link rel="stylesheet" href="/css/style.css">
@@ -56,7 +56,7 @@
         <span>on&nbsp;</span><time datetime="2022-09-15 00:00:00 &#43;0000 UTC">September 15, 2022</time>
 </div>
 
-		<h1 class="post-title">Blog 1</h1>
+		<h1 class="post-title">Election Analytics: Blog 1</h1>
 <div class="post-line"></div>
 
 		
@@ -64,35 +64,22 @@
 		
 
 
-<p>This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.</p>
-<pre class="r"><code># Plot of 2018 voteshare margin
-plot_usmap(data = house2018, 
-           regions = &quot;states&quot;, 
-           values = &quot;Votemargin&quot;,
-           labels = TRUE) +
-  scale_fill_gradient2(low = &quot;skyblue3&quot;, 
-                       mid = &quot;white&quot;,
-                       high = &quot;firebrick3&quot;, 
-                       name = &quot;Two-party Voteshare Margin&quot;) +
-  labs(title = &quot;2018 Two-Party Voteshare Margin&quot;) +
-  theme_void()</code></pre>
-<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code># Graph
-ggplot() +
-  geom_sf(data = simplified_cd114, mapping = aes(fill = voteshare_margin)) +
-  scale_fill_gradient2(low = &quot;skyblue3&quot;, mid = &quot;white&quot;, high = &quot;firebrick3&quot;, 
-                         name = &quot;Two-Party \nVoteshare Margin&quot;) +
-  theme_void() +
-  labs(title = &quot;Two-Party Vote-Share Margin by District&quot;,
-       subtitle = &quot;2014 Midterm Election&quot;)</code></pre>
-<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.</p>
+<p>This week, I focused on visualization customization of congressional races.</p>
+<p><strong>Map of Republican/Democrat vote-share margin by STATE (2016, 2018):</strong></p>
+<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p>The first set of maps represent the two-party vote share margin in the 2016 and 2018 congressional elections. Vote share margin indicates the proportion of the <em>difference</em> between the Republican and Democratic vote share [(R-D) / (R+D)]. When the vote share margin is <strong>less than 0</strong>, this means that the majority of the votes went to the <strong>Democratic party</strong>; on the other hand, when the vote share margin is <strong>greater than 0</strong>, this means that the majority of the votes went to the <strong>Republican party</strong>. The greater the absolute value of the vote share margin (e.g., -0.4 or 0.4), the greater the difference in vote share margin between the two parties. For example, in the 2018 election, Pennsylvania had a vote share margin of -0.103, which indicates that the total Democratic vote share was about 10.3% more than the total Republican vote share. However, one caveat to note is that if the vote share margin is 1, this usually means that the candidates in the state ran unopposed, resulting in all of the votes going to the one party.</p>
+<p>The map on the top represents the results of the 2016 congressional elections, while the map on the bottom represents the results of the 2018 congressional elections. Compared to the 2018 map, the 2016 map has more muted blue states, which indicates states with weaker margins of vote share for Democrats. The 2016 congressional elections coincided with the presidential election of Donald Trump where Republicans saw more victory nationwide. But in the 2018 map, we see many of the states that were muted blue become much deeper blue and even some muted red states turn blue, especially in the Midwest area. In 2018, a historic voter turnout for a midterm election, in what seemed like an ultimatum against Trump, flipped many congressional seats back to blue. For example, in the 2016 congressional elections, the majority of votes went to the Republicans in Pennsylvania, but in 2018 this pattern was reversed and the majority of votes went to the Democrats in Pennsylvania. As a result, the Pennsylvania Democrats gained an additional 3 congressional seats, while the Republicans lost 1 seat.</p>
+<p><strong>Map of Republican/Democrat vote share margin by CONGRESSIONAL DISTRICT (2014):</strong>
+<img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+This map disaggregates the data so that one can examine the vote share margin at the congressional district level, which allows for more nuanced analysis than the previous maps simply at the state level. For example, in California, at the state-level it would usually be colored “blue” for a vote share margin favoring Democrats, but disaggregating the data to the congressional district level reveals districts where the Republican vote share was greater. In fact, at the state level, the Democratic total vote share was about 7% greater than the Republican total vote share. However, in California’s District 1, the Republican vote share was about 22% greater than the Democratic vote share.</p>
+<p>These exercises have made me think about what is the best way to present data, especially election contestation. I look forward to using other outcome measures, like party seat change, on top of vote share margin in analyzing election results.</p>
 
 
 		
 	</div>
 
 	<div class="pagination">
-		<a href="/post/2022-09-15-blog-1-analysis/" class="left arrow">&#8592;</a>
 
 		<a href="#" class="top">Top</a>
 	</div>
@@ -102,7 +89,7 @@ ggplot() +
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-09-15 01:18:39.540277 -0400 EDT m=&#43;0.076651914">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-09-15 06:39:05.493783 -0400 EDT m=&#43;0.094077370">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

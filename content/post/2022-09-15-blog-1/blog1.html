@@ -1,8 +1,10 @@
 ---
-title: "Blog 1: Vote Share Margins of Congressional Elections"
+title: 'Election Analytics: Blog 1'
 author: "June Park"
 date: '2022-09-15'
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
 categories: []
 tags: []
 slug: []
@@ -12,15 +14,11 @@ slug: []
 
 <p>Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.</p>
 <p>This week, I focused on visualization customization of congressional races.</p>
-<div id="map-of-republicandemocrat-vote-share-margin-by-state-2016-2018" class="section level2">
-<em>Map of Republican/Democrat vote-share margin by STATE (2016, 2018):</em>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>The first set of maps (see above) represent the two-party vote share margin in the 2016 and 2018 congressional elections. Vote share margin indicates the proportion of the <em>difference</em> between the Republican and Democratic vote share [(R-D) / (R+D)]. When the vote share margin is <strong>less than 0</strong>, this means that the majority of the votes went to the <strong>Democratic party</strong>; on the other hand, when the vote share margin is <strong>greater than 0</strong>, this means that the majority of the votes went to the <strong>Republican party</strong>. The greater the absolute value of the vote share margin (e.g., -0.4 or 0.4), the greater the difference in vote share margin between the two parties. For example, in the 2018 election, Pennsylvania had a vote share margin of -0.103, which indicates that the total Democratic vote share was about 10.3% more than the total Republican vote share. However, one caveat to note is that if the vote share margin is 1, this usually means that the candidates in the state ran unopposed, resulting in all of the votes going to the one party.</p>
+<p><strong>Map of Republican/Democrat vote-share margin by STATE (2016, 2018):</strong></p>
+<p><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p>The first set of maps represent the two-party vote share margin in the 2016 and 2018 congressional elections. Vote share margin indicates the proportion of the <em>difference</em> between the Republican and Democratic vote share [(R-D) / (R+D)]. When the vote share margin is <strong>less than 0</strong>, this means that the majority of the votes went to the <strong>Democratic party</strong>; on the other hand, when the vote share margin is <strong>greater than 0</strong>, this means that the majority of the votes went to the <strong>Republican party</strong>. The greater the absolute value of the vote share margin (e.g., -0.4 or 0.4), the greater the difference in vote share margin between the two parties. For example, in the 2018 election, Pennsylvania had a vote share margin of -0.103, which indicates that the total Democratic vote share was about 10.3% more than the total Republican vote share. However, one caveat to note is that if the vote share margin is 1, this usually means that the candidates in the state ran unopposed, resulting in all of the votes going to the one party.</p>
 <p>The map on the top represents the results of the 2016 congressional elections, while the map on the bottom represents the results of the 2018 congressional elections. Compared to the 2018 map, the 2016 map has more muted blue states, which indicates states with weaker margins of vote share for Democrats. The 2016 congressional elections coincided with the presidential election of Donald Trump where Republicans saw more victory nationwide. But in the 2018 map, we see many of the states that were muted blue become much deeper blue and even some muted red states turn blue, especially in the Midwest area. In 2018, a historic voter turnout for a midterm election, in what seemed like an ultimatum against Trump, flipped many congressional seats back to blue. For example, in the 2016 congressional elections, the majority of votes went to the Republicans in Pennsylvania, but in 2018 this pattern was reversed and the majority of votes went to the Democrats in Pennsylvania. As a result, the Pennsylvania Democrats gained an additional 3 congressional seats, while the Republicans lost 1 seat.</p>
-</div>
-<div id="map-of-republicandemocrat-vote-share-margin-by-congressional-district-2014" class="section level2">
-<em>Map of Republican/Democrat vote share margin by CONGRESSIONAL DISTRICT (2014):</em>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<p><strong>Map of Republican/Democrat vote share margin by CONGRESSIONAL DISTRICT (2014):</strong>
+<img src="/post/2022-09-15-blog-1/blog1_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 This map disaggregates the data so that one can examine the vote share margin at the congressional district level, which allows for more nuanced analysis than the previous maps simply at the state level. For example, in California, at the state-level it would usually be colored “blue” for a vote share margin favoring Democrats, but disaggregating the data to the congressional district level reveals districts where the Republican vote share was greater. In fact, at the state level, the Democratic total vote share was about 7% greater than the Republican total vote share. However, in California’s District 1, the Republican vote share was about 22% greater than the Democratic vote share.</p>
 <p>These exercises have made me think about what is the best way to present data, especially election contestation. I look forward to using other outcome measures, like party seat change, on top of vote share margin in analyzing election results.</p>
-</div>

@@ -1,10 +1,10 @@
 ---
-title: 'Blog 1: Vote Share Margins of Congressional Elections'
+title: 'Election Analytics: Blog 1'
 author: "June Park"
 date: '2022-09-15'
 output:
-  html_document:
-    df_print: paged
+  html_document: default
+  pdf_document: default
 categories: []
 tags: []
 slug: []
