@@ -89,7 +89,6 @@ ggplot() +
   scale_fill_gradient2(low = "skyblue3", mid = "white", high = "firebrick3", 
                          name = "Two-Party \nVoteshare Margin") +
   theme_void() +
-  labs(title = "Two-Party Vote-Share Margin by District",
-       subtitle = "2014 Midterm Election")
+  labs(title = "2014 Two-Party Vote-Share Margin by District")
 ```
 
