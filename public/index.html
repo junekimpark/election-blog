@@ -59,8 +59,8 @@
         <div class="catalogue-line"></div>
 
         <p>
-            This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.
-# libraries library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.3.5 ✔ purrr 0.3.4 ## ✔ tibble 3.1.6 ✔ dplyr 1.0.8 ## ✔ tidyr 1.2.0 ✔ stringr 1.4.0 ## ✔ readr 2.1.2 ✔ forcats 0.5.1 ## Warning: package &#39;tidyr&#39; was built under R version 4.
+             This week, I looked at the Republican/Democrat voteshare margin of House congressional elections. I analyzed the 2018 and 2014 congressional elections.
+# Plot of 2018 voteshare margin plot_usmap(data = house2018, regions = &quot;states&quot;, values = &quot;Votemargin&quot;, labels = TRUE) + scale_fill_gradient2(low = &quot;skyblue3&quot;, mid = &quot;white&quot;, high = &quot;firebrick3&quot;, name = &quot;Two-party Voteshare Margin&quot;) + labs(title = &quot;2018 Two-Party Voteshare Margin&quot;) + theme_void() # Graph ggplot() + geom_sf(data = simplified_cd114, mapping = aes(fill = voteshare_margin)) + scale_fill_gradient2(low = &quot;skyblue3&quot;, mid = &quot;white&quot;, high = &quot;firebrick3&quot;, name = &quot;Two-Party \nVoteshare Margin&quot;) + theme_void() + labs(title = &quot;Two-Party Vote-Share Margin by District&quot;, subtitle = &quot;2014 Midterm Election&quot;) 
         </p>
     </div>
 </a>
@@ -80,7 +80,7 @@
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-09-15 00:57:30.643431 -0400 EDT m=&#43;0.080139719">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-09-15 01:06:32.784525 -0400 EDT m=&#43;0.093483760">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
