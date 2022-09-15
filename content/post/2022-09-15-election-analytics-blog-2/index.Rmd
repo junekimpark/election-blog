@@ -78,6 +78,8 @@ lm1 <- lm(H_incumbent_party_majorvote_pct ~ change_in_cpi + DSPIC_qt + DSPIC_cha
 
 ```
 
+## Testing
+
 ```{r}
 stargazer(lm1, type = "text")
 ```
