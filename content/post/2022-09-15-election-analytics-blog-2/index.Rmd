@@ -7,6 +7,8 @@ categories: []
 tags: []
 ---
 
+Blog 2: Economic Models
+
 ```{r, include = FALSE}
 # hide stuff
 knitr::opts_chunk$set(echo = FALSE)
@@ -73,8 +75,9 @@ house_cpi_rdi_gdp <- left_join(house_cpi_rdi, clean_gdp, by = 'year') %>%
 
 lm1 <- lm(H_incumbent_party_majorvote_pct ~ change_in_cpi + DSPIC_qt + DSPIC_change_pct + GDP_growth_qt + GDP_growth_pct, data = house_cpi_rdi_gdp)
 
-
-stargazer(lm1, type = "text")
 ```
 
+```{r}
+stargazer(lm1, type = "text")
+```
 
