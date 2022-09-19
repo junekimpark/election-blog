@@ -37,48 +37,132 @@ gdp_quarterly <- read_csv("GDP_quarterly.csv")
 # R_majorvote_pct, D_majorvote_pct, H_incumbent_party_majorvote_pct
 # seat change: (latest year # of seats) - (previous year # of seats)
 
+# create incumbent margin
+clean_house <- house %>% 
+  mutate(incumbent_margin = (2 * H_incumbent_party_majorvote_pct - 100)) 
+
 # cleaning cpi_monthly
 clean_cpi <- cpi_monthly %>% 
   mutate(year = year(DATE), month = month(DATE)) %>% 
-  filter(year %% 2 == 0 & (month == 9 | month == 10)) %>% 
+  filter(year %% 2 == 0 & (month == 9 | month == 6)) %>% 
   select(-c(DATE)) %>% 
   pivot_wider(id_cols = year, names_from = month, values_from = CPIAUCSL) %>% 
-  mutate(change_in_cpi = `10` - `9`)
+  mutate(change_in_cpi = `9` - `6`) # Q7 - Q6
 
 # cleaning rdi_quarterly
 clean_rdi <- rdi_quarterly %>% 
-  filter(quarter_cycle == 8)
+  filter(quarter_cycle == 7) # Q7 - Q6
 
 # cleaning gdp_quarterly
 clean_gdp <- gdp_quarterly %>% 
-  filter(quarter_cycle == 8)
+  filter(quarter_cycle == 7) # Q7 - Q6
 
 
 # left join of house and cpi
-house_cpi <- left_join(house, clean_cpi, by = 'year') %>%
+house_cpi <- left_join(clean_house, clean_cpi, by = 'year') %>%
   drop_na() %>%
   select('year', 'R_majorvote_pct', 'D_majorvote_pct',
-         'H_incumbent_party_majorvote_pct', 'change_in_cpi')
+         'incumbent_margin', 'change_in_cpi')
 
 # left join of house, cpi, rdi
 house_cpi_rdi <- left_join(house_cpi, clean_rdi, by = 'year') %>% 
   drop_na() %>% 
   select('year', 'R_majorvote_pct', 'D_majorvote_pct',
-         'H_incumbent_party_majorvote_pct', 'change_in_cpi', 
+         'incumbent_margin', 'change_in_cpi', 
          'DSPIC_qt','DSPIC_change_pct')
 
 # final cleaned data set with everything
 house_cpi_rdi_gdp <- left_join(house_cpi_rdi, clean_gdp, by = 'year') %>% 
   drop_na() %>% 
   select('year', 'R_majorvote_pct', 'D_majorvote_pct',
-         'H_incumbent_party_majorvote_pct', 'change_in_cpi', 
+         'incumbent_margin', 'change_in_cpi', 
          'DSPIC_qt','DSPIC_change_pct', 'GDP_growth_qt', 'GDP_growth_pct')
 
-lm1 <- lm(H_incumbent_party_majorvote_pct ~ change_in_cpi + DSPIC_qt + DSPIC_change_pct + GDP_growth_qt + GDP_growth_pct, data = house_cpi_rdi_gdp)
+## change_in_cpi: 52.320 - 0.318  * X
+summary(lm(incumbent_margin ~ change_in_cpi, data = house_cpi_rdi_gdp))
+
+## DSPIC_change_pct: 52.0568 - 0.1553 * X
+summary(lm(incumbent_margin ~ DSPIC_change_pct, data = house_cpi_rdi_gdp))
+
+## GDP_growth_pct: 52.04616 - 0.04544 * X
+summary(lm(incumbent_margin ~ GDP_growth_pct, data = house_cpi_rdi_gdp))
+
+just_changes <- lm(incumbent_margin ~ change_in_cpi + DSPIC_change_pct + GDP_growth_pct, data = house_cpi_rdi_gdp)
+
+just_points <- lm(incumbent_margin ~ change_in_cpi + DSPIC_qt + GDP_growth_qt, data = house_cpi_rdi_gdp)
+
+everything <- lm(incumbent_margin ~ change_in_cpi + DSPIC_qt + DSPIC_change_pct + GDP_growth_qt + GDP_growth_pct, data = house_cpi_rdi_gdp)
 
 ```
 
 ```{r}
-stargazer(lm1, type = "text")
+stargazer(just_changes, type = "text")
+
+stargazer(just_points, type = "text")
+
+stargazer(everything, type = "text")
+```
+
+```{r plots with 2020}
+house_cpi_rdi_gdp %>%
+  ggplot(aes(x=change_in_cpi, y=incumbent_margin,
+             label=year)) + 
+    geom_text(size = 4) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    xlab("Q7-Q6 CPI Average (X)") +
+    ylab("Incumbent party PV (Y)") +
+    theme_bw() +
+    ggtitle("CPI Average, Y = 55.537 - 0.027  * X")
+
+house_cpi_rdi_gdp %>%
+  ggplot(aes(x=DSPIC_change_pct, y=incumbent_margin,
+             label=year)) + 
+    geom_text(size = 4) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    xlab("Q7-Q6 DSPIC Change (X)") +
+    ylab("Incumbent party PV (Y)") +
+    theme_bw() +
+    ggtitle("DSPIC Change, Y = 52.057 - 0.155  * X")
+
+house_cpi_rdi_gdp %>% 
+  ggplot(aes(x=GDP_growth_pct, y=incumbent_margin,
+             label=year)) + 
+    geom_text(size = 4) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    xlab("Q7-Q6 DSPIC Change (X)") +
+    ylab("Incumbent party PV (Y)") +
+    theme_bw() +
+    ggtitle("DSPIC Change, Y = 52.057 - 0.155  * X")
+
+
+# with 2022
+house_cpi_rdi_gdp %>%
+  ggplot(aes(x=DSPIC_change_pct, y=incumbent_margin,
+             label=year)) +
+    annotate("point", x = -0.6, y = 52.5108, colour = "blue") +
+    geom_text(size = 4) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) + # median
+    xlab("Q7-Q6 CPI Average (X)") +
+    ylab("Incumbent party PV (Y)") +
+    theme_bw() +
+    ggtitle("CPI Average, Y = 55.537 - 0.027  * X")
+
+#
+house_cpi_rdi_gdp %>%
+  ggplot(aes(x=DSPIC_change_pct, y=H_incumbent_party_majorvote_pct,
+             label=year)) +
+    annotate("point", x = -0.6, y = 52.5108, colour = "blue") +
+    geom_text(size = 4) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) + # median
+    xlab("Q7-Q6 CPI Average (X)") +
+    ylab("Incumbent party PV (Y)") +
+    theme_bw() +
+    ggtitle("CPI Average, Y = 55.537 - 0.027  * X")
+
+
 ```
 

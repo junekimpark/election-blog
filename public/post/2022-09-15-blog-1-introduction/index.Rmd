@@ -1,0 +1,132 @@
+---
+title: 'Blog 1: Introduction'
+author: "June Park"
+date: '2022-09-15'
+output: pdf_document
+tags: []
+slug: []
+categories: []
+---
+
+Hello! My name is June Park and I am a junior at the college studying Government on the data science track and this is the beginning of my blog for GOV 1347: Election Analytics.
+
+This week, I focused on visualization customization of congressional races. 
+
+```{r, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(blogdown)
+
+# data
+housepartyvote <- read_csv("house party vote share by district 1948-2020.csv")
+```
+
+```{r, include = FALSE}
+# Dataset of 2018 voteshare margin
+house2016 <- housepartyvote %>%
+  filter(raceYear == 2016) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # create Votemargin
+  mutate(Votemargin = (sum(RepVotes - DemVotes))/sum(RepVotes + DemVotes)) %>%
+  rename(state = State)
+
+house2018 <- housepartyvote %>%
+  filter(raceYear == 2018) %>%
+  select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+  group_by(State) %>%
+  # create Votemargin
+  mutate(Votemargin = (sum(RepVotes - DemVotes))/sum(RepVotes + DemVotes)) %>%
+  rename(state = State)
+
+house2018 %>% 
+  filter(state == "Pennsylvania") %>% 
+  group_by(state) %>% 
+  mutate(Votemargin = (sum(RepVotes - DemVotes))/sum(RepVotes + DemVotes))
+```
+
+**Map of Republican/Democrat Vote Share Margin by STATE (2016, 2018):**
+
+```{r}
+# Plot of 2016 voteshare margin
+plot_usmap(data = house2016, 
+           regions = "states", 
+           values = "Votemargin",
+           labels = TRUE) +
+  scale_fill_gradient2(low = "skyblue3", 
+                       mid = "white",
+                       high = "firebrick3", 
+                       name = "Two-party \nVoteshare Margin") +
+  labs(title = "2016 Two-Party Vote Share Margin") +
+  theme_void()
+
+# Plot of 2018 voteshare margin
+plot_usmap(data = house2018, 
+           regions = "states", 
+           values = "Votemargin",
+           labels = TRUE) +
+  scale_fill_gradient2(low = "skyblue3", 
+                       mid = "white",
+                       high = "firebrick3", 
+                       name = "Two-party \nVoteshare Margin") +
+  labs(title = "2018 Two-Party Vote Share Margin") +
+  theme_void()
+
+```
+
+The first set of maps represent the two-party vote share margin in the 2016 and 2018 congressional elections. Vote share margin indicates the proportion of the *difference* between the Republican and Democratic vote share [(R-D) / (R+D)]. When the vote share margin is **less than 0**, this means that the majority of the votes went to the **Democratic party**; on the other hand, when the vote share margin is **greater than 0**, this means that the majority of the votes went to the **Republican party**. The greater the absolute value of the vote share margin (e.g., -0.4 or 0.4), the greater the difference in vote share margin between the two parties. For example, in the 2018 election, Pennsylvania had a vote share margin of -0.103, which indicates that the total Democratic vote share was about 10.3% more than the total Republican vote share. However, one caveat to note is that if the vote share margin is 1, this usually means that the candidates in the state ran unopposed, resulting in all of the votes going to the one party. 
+
+The map on the top represents the results of the 2016 congressional elections, while the map on the bottom represents the results of the 2018 congressional elections. Compared to the 2018 map, the 2016 map has more muted blue states, which indicates states with weaker margins of vote share for Democrats. The 2016 congressional elections coincided with the presidential election of Donald Trump where Republicans saw more victory nationwide. But in the 2018 map, we see many of the states that were muted blue become much deeper blue and even some muted red states turn blue, especially in the Midwest area. In 2018, a historic voter turnout for a midterm election, in what seemed like an ultimatum against Trump, flipped many congressional seats back to blue. For example, in the 2016 congressional elections, the majority of votes went to the Republicans in Pennsylvania, but in 2018 this pattern was reversed and the majority of votes went to the Democrats in Pennsylvania. As a result, the Pennsylvania Democrats gained an additional 3 congressional seats, while the Republicans lost 1 seat. 
+
+```{r, include = FALSE}
+# Load geographic data for 114th congress - 2014 election
+get_congress_map <- function(cong=114) {
+  tmp_file <- tempfile()
+  tmp_dir <- tempdir()
+  zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+  download.file(zp, tmp_file)
+  unzip(zipfile = tmp_file, exdir = tmp_dir)
+  fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+  st_read(fpath)
+}
+
+# Load 114th congress
+cd114 <- get_congress_map(114)
+
+# Find vote-share margins for the 2014 election
+district2014 <- housepartyvote %>%
+  filter(raceYear == 2014) %>%
+  mutate(voteshare_margin = (RepVotes - DemVotes)/(RepVotes + DemVotes)) %>%
+  select(raceYear, State, district_num, district_id, voteshare_margin) %>%
+  mutate(DISTRICT = as.character(district_num)) %>%
+  rename(STATENAME = State)
+  
+simplified_cd114 <- left_join(district2014, cd114, by = c("STATENAME", "DISTRICT")) %>%
+  filter(!STATENAME %in% c("Alaska","Hawaii")) %>%
+  st_as_sf() %>%
+  st_transform("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=sphere +units=m +no_defs") %>%
+  ms_simplify()
+```
+
+**Map of Republican/Democrat Vote Share Margin by CONGRESSIONAL DISTRICT (2014):**
+```{r}
+# Graph
+ggplot() +
+  geom_sf(data = simplified_cd114, mapping = aes(fill = voteshare_margin)) +
+  scale_fill_gradient2(low = "skyblue3", mid = "white", high = "firebrick3", 
+                         name = "Two-Party \nVoteshare Margin") +
+  theme_void() +
+  labs(title = "2014 Two-Party Vote Share Margin by District")
+```
+This map disaggregates the data so that one can examine the vote share margin at the congressional district level, which allows for more nuanced analysis than the previous maps simply at the state level. For example, in California, at the state-level it would usually be colored “blue” for a vote share margin favoring Democrats, but disaggregating the data to the congressional district level reveals districts where the Republican vote share was greater. In fact, at the state level, the Democratic total vote share was about 7% greater than the Republican total vote share. However, in California’s District 1, the Republican vote share was about 22% greater than the Democratic vote share. 
+
+These exercises have made me think about what is the best way to present data, especially election contestation. I look forward to using other outcome measures, like party seat change, on top of vote share margin in analyzing election results. 
