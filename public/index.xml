@@ -6,7 +6,17 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 19 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog 2: Economy and Elections</title>
+      <link>http://example.org/post/2022-09-19-blog-2-economy-and-elections/</link>
+      <pubDate>Mon, 19 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-09-19-blog-2-economy-and-elections/</guid>
+      <description>Introduction: This week, I focused on evaluating predictive models that used national economic variables as predictors for the incumbent party’s vote margin (%) in House congressional races. My goal was to better understand the economic model of voting behavior of congressional elections.
+Previous Literature: Achen and Bartels (2017) analyzed the economic model of voting behavior of presidential races. They found that, “it is possible to account for recent presidential election outcomes with a fair degree of precision solely on the basis of how long the incumbent party had been in power and how much real income growth voters experienced in the six months leading up to Election Day.</description>
+    </item>
+    
     <item>
       <title>Blog 1: Introduction</title>
       <link>http://example.org/post/2022-09-15-blog-1-introduction/</link>
@@ -17,16 +27,6 @@
 This week, I focused on visualization customization of congressional races.
 Map of Republican/Democrat Vote Share Margin by STATE (2016, 2018):
 The first set of maps represent the two-party vote share margin in the 2016 and 2018 congressional elections.</description>
-    </item>
-    
-    <item>
-      <title>Election Analytics: Blog 2</title>
-      <link>http://example.org/post/2022-09-15-election-analytics-blog-2/</link>
-      <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/post/2022-09-15-election-analytics-blog-2/</guid>
-      <description>Blog 2: Economic Models
-## ## =================================================== ## Dependent variable: ## ------------------------------- ## H_incumbent_party_majorvote_pct ## --------------------------------------------------- ## change_in_cpi 0.360 ## (1.026) ## ## DSPIC_qt -0.0001*** ## (0.00004) ## ## DSPIC_change_pct -1.307** ## (0.593) ## ## GDP_growth_qt -0.021 ## (0.013) ## ## GDP_growth_pct 1.263 ## (1.461) ## ## Constant 56.648*** ## (1.166) ## ## --------------------------------------------------- ## Observations 31 ## R2 0.554 ## Adjusted R2 0.465 ## Residual Std. Error 2.516 (df = 25) ## F Statistic 6.</description>
     </item>
     
   </channel>
