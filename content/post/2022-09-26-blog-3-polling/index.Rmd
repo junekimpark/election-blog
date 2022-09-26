@@ -1,0 +1,183 @@
+---
+title: 'Blog 3: Polling'
+author: "June Park"
+date: '2022-09-26'
+output: pdf_document
+categories: []
+tags: []
+slug: []
+---
+
+```{r, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(ggrepel)
+
+# data
+house <- read_csv("house_popvote_seats.csv")
+polls <- read_csv("polls_df.csv")
+polls2022 <- read_csv("generic_ballot_polls_2022.csv")
+```
+
+## Introduction
+This week, I focused on polling to help predict the 2022 House party seat share (%). 
+
+## What Do Forecasters Do?
+FiveThirtyEight’s approach to forecasting congressional elections is as follows, “take lots of polls, perform various types of adjustments to them, and then blend them with other kinds of empirically useful indicators (what we sometimes call “the fundamentals”) to forecast each race. Then they account for the uncertainty in the forecast and simulate the election thousands of times” (Silver, 2022). In other words, in the “classic” version of their House forecast, FiveThirtyEight uses district-by-district polls and then adds “fundamentals” aka non-polling factors, including ​​incumbency, past voting history in the state or district, fundraising, and the generic ballot.
+
+The Economist’s approach to forecasting the 2020 congressional election was done in three basic steps. First, the model needed to “predict an accurate range of outcomes for the national popular vote for the House—the sum of all votes cast for Democratic or Republican House candidates, with an adjustment for seats where one party is running unopposed” (Morris, 2020). To do this, they used generic-ballot polling, presidential approval ratings, average results of special elections held to fill vacant legislative seats, and the number of days left until the election. Then, the model needed to use this data from the overall national political environment to try to forecast at the district level. Similar to FiveThirtyEight, they used “fundamentals” like historical voting record and incumbency to “predict each district’s “partisan lean”—the gap between the election result in each district and the overall national average” and if there were any, local polls (Morris, 2020). Finally, the model randomly simulated a result in each race 10,000 times for the forecast.
+
+Personally, I believe that the Economist has a better approach to forecasting because of its consideration of presidential approval ratings and number of days left until the election for the overall national political environment. Research shows that the president’s party usually suffers during midterm elections. This could be because voters tend to use the president as a heuristic for judging the Congressional parties. Furthermore, we know from Gelman and King (1993) that the number of days left until the election matters for the accuracy of the polls. They state, “In most years, early public opinion polls give fairly miserable forecasts of the actual election outcome… Additionally, in virtually every presidential election in the last forty years, the polls converge to a point near the actual election outcome shortly before election day” (Gelman & King, 1993). It is important that we take earlier polls with a grain of salt and not get stuck into the “horse” race of election polling like Gelman and King state. In addition, FiveThirtyEight relies more on local polling, which I believe might have too much variation and uncertainty. 
+
+```{r}
+# added R_seat_percentage and D_seat_percentage columns
+house <- house %>% 
+  mutate(R_seat_percentage = (R_seats) /  (R_seats + D_seats),
+         D_seat_percentage = (D_seats) / (D_seats + R_seats))
+
+# cleaning polls df
+polls$poll_date <- as.Date(polls$poll_date, format = "%m/%d/%Y")
+
+cleaned_polls <- polls %>% 
+  filter(days_until_election <= 52) %>% # the closest poll to election day for 1952 was 51.5
+  group_by(year, party) %>% 
+  summarise(average_support = mean(support))
+
+# graph of all polls by year
+ggplot(data = cleaned_polls, aes(x = year, y = average_support, color = party)) +
+  geom_point(size = 1) +
+  geom_line() +
+  scale_color_manual(values = c("blue","red"), name = "") +
+  labs(title = "Average Generic Ballot Poll Score of House Seat Share",
+       y = "House Generic Ballot Poll Score (%)",
+       x = "") +
+  theme_bw()
+
+# left join
+house_polls <- house %>% 
+  left_join(cleaned_polls)
+
+# combined data set for Democratic Party
+house_polls_d <- house_polls %>% 
+  filter(party == "D")
+
+# combine data set for Republican Party
+house_polls_r <- house_polls %>% 
+  filter(party == "R")
+
+# graph of polls and Republican actual result
+# polls generally under-predict Republican result
+ggplot(data = house_polls_r, aes(x = year, y = average_support, color = party)) +
+  geom_point(size = 1) +
+  geom_line() +
+  geom_point(aes(x = year, y = R_majorvote_pct), # in red = Republican actual vote
+             size = 1,
+             color = "red") + 
+  geom_line(aes(x = year, y = R_majorvote_pct), color = "red") + 
+  scale_color_manual(values = c("black"), name = "Republican Generic Ballot Poll") + # in black = Republican polls
+  labs(title = "Comparison of Republican Generic Ballot Polls and Actual Results",
+       y = "Percentage (%)",
+       x = "",
+       caption = "The red line represents the actual Republican House seat share (%).") +
+  theme_bw()
+
+# graph of polls and Democratic actual result
+# polls generally under-predict Democratic result
+ggplot(data = house_polls_d, aes(x = year, y = average_support, color = party)) +
+  geom_point(size = 1) +
+  geom_line() +
+  geom_point(aes(x = year, y = D_majorvote_pct), # in blue = Democratic actual vote
+             size = 1,
+             color = "blue") + 
+  geom_line(aes(x = year, y = D_majorvote_pct), color = "blue") + 
+  scale_color_manual(values = c("black"), name = "Democrat Generic Ballot Poll") + # in black = Democratic polls
+  labs(title = "Comparison of Democratic Generic Ballot Polls and Actual Results",
+       y = "Percentage (%)",
+       x = "",
+       caption = "The blue line represents the actual Democratic House seat share (%).") +
+  theme_bw()
+
+```
+
+```{r}
+# Democrat
+dem_poll_lm <- lm(D_majorvote_pct ~ average_support, data = house_polls_d)
+summary(dem_poll_lm)
+
+# Republican
+rep_poll_lm <- lm(R_majorvote_pct ~ average_support, data = house_polls_r)
+summary(rep_poll_lm)
+
+```
+
+```{r}
+# cleanings polls 2022 df
+polls2022$end_date <- as.Date(polls2022$end_date, format = "%m/%d/%y")
+polls2022$election_date <- as.Date(polls2022$election_date, format = "%m/%d/%y")
+
+# Democrat's average generic ballot poll score = 44.9125
+# polls2022 %>% 
+  # mutate(days_until_election = election_date - end_date) %>% 
+  # filter(days_until_election <= 52) %>% 
+  # select(pollster, dem, rep, days_until_election) %>% 
+  # summarize(average_dem_poll = mean(dem))
+
+# Republican's average generic ballot poll score = 42.7125
+# polls2022 %>% 
+  # mutate(days_until_election = election_date - end_date) %>% 
+  # filter(days_until_election <= 52) %>% 
+  # select(pollster, dem, rep, days_until_election) %>% 
+  # summarize(average_rep_poll = mean(rep))
+
+# creating data points for 2022 based on average generic ballot score
+# predict_poll_2022_dem <- data.frame(average_support = 44.9125)
+# predict_poll_2022_rep <- data.frame(average_support = 42.7125)
+
+# finding out predicted seat share % from average generic ballot score
+# predict(dem_poll_lm, newdata = predict_poll_2022_dem) # Democrat = 51.05035 
+# predict(dem_poll_lm, newdata = predict_poll_2022_rep) # Republican = 50.23568
+  
+```
+
+```{r}
+# prediction graph for democratic house seat share
+ggplot(data = house_polls_d, aes(x = average_support, y = D_majorvote_pct, label = year)) +
+  geom_text(size = 4) +
+  geom_smooth(method = "lm") +
+  annotate("point", x = 44.9125, y = 51.05035, colour = "purple") + # 2022 point
+  annotate("label", x = 44.9125, y = 51.05035, # 2022 label
+             label = "2022", colour = "purple", vjust = -0.5) +
+  geom_hline(yintercept=50, lty=2) +
+  geom_vline(xintercept=50, lty=2) +
+  labs(title = "Democratic House Seat Share by Average Generic Ballot Poll Score",
+       subtitle = "y = 0.37031*x + 34.41894",
+       x = "Average Generic Ballot Poll Score (%)",
+       y = "Democratic House Seat Share (%)",
+       caption = "The 2022 predicted Democratic House seat share is 51.05035.\nAverage Generic Ballot Poll Score is calculated from polls taken 52 days and earlier from the election.") +
+  theme_bw()
+
+# prediction graph for republican house seat share
+ggplot(data = house_polls_r, aes(x = average_support, y = R_majorvote_pct, label = year)) +
+  geom_text(size = 4) +
+  geom_smooth(method = "lm") +
+  annotate("point", x = 42.7125, y = 50.23568, colour = "purple") + # 2022 point
+  annotate("label", x = 42.7125, y = 50.23568, # 2022 label
+             label = "2022", colour = "purple", vjust = -0.5) +
+  geom_hline(yintercept=50, lty=2) +
+  geom_vline(xintercept=50, lty=2) +
+  labs(title = "Republican House Seat Share by Average Generic Ballot Poll Score",
+       subtitle = "y = 0.45979*x + 29.29204",
+       x = "Average Generic Ballot Poll Score (%)",
+       y = "Republican House Seat Share (%)",
+       caption = "The 2022 predicted Republican House seat share is 50.23568.\nAverage Generic Ballot Poll Score is calculated from polls taken 52 days and earlier from the election.") +
+  theme_bw()
+```
+

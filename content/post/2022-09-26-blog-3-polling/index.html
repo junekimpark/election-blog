@@ -1,0 +1,67 @@
+---
+title: 'Blog 3: Polling'
+author: "June Park"
+date: '2022-09-26'
+output: pdf_document
+categories: []
+tags: []
+slug: []
+---
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This week, I focused on polling to help predict the 2022 House party seat share (%).</p>
+</div>
+<div id="what-do-forecasters-do" class="section level2">
+<h2>What Do Forecasters Do?</h2>
+<p>FiveThirtyEight’s approach to forecasting congressional elections is as follows, “take lots of polls, perform various types of adjustments to them, and then blend them with other kinds of empirically useful indicators (what we sometimes call “the fundamentals”) to forecast each race. Then they account for the uncertainty in the forecast and simulate the election thousands of times” (Silver, 2022). In other words, in the “classic” version of their House forecast, FiveThirtyEight uses district-by-district polls and then adds “fundamentals” aka non-polling factors, including ​​incumbency, past voting history in the state or district, fundraising, and the generic ballot.</p>
+<p>The Economist’s approach to forecasting the 2020 congressional election was done in three basic steps. First, the model needed to “predict an accurate range of outcomes for the national popular vote for the House—the sum of all votes cast for Democratic or Republican House candidates, with an adjustment for seats where one party is running unopposed” (Morris, 2020). To do this, they used generic-ballot polling, presidential approval ratings, average results of special elections held to fill vacant legislative seats, and the number of days left until the election. Then, the model needed to use this data from the overall national political environment to try to forecast at the district level. Similar to FiveThirtyEight, they used “fundamentals” like historical voting record and incumbency to “predict each district’s “partisan lean”—the gap between the election result in each district and the overall national average” and if there were any, local polls (Morris, 2020). Finally, the model randomly simulated a result in each race 10,000 times for the forecast.</p>
+<p>Personally, I believe that the Economist has a better approach to forecasting because of its consideration of presidential approval ratings and number of days left until the election for the overall national political environment. Research shows that the president’s party usually suffers during midterm elections. This could be because voters tend to use the president as a heuristic for judging the Congressional parties. Furthermore, we know from Gelman and King (1993) that the number of days left until the election matters for the accuracy of the polls. They state, “In most years, early public opinion polls give fairly miserable forecasts of the actual election outcome… Additionally, in virtually every presidential election in the last forty years, the polls converge to a point near the actual election outcome shortly before election day” (Gelman &amp; King, 1993). It is important that we take earlier polls with a grain of salt and not get stuck into the “horse” race of election polling like Gelman and King state. In addition, FiveThirtyEight relies more on local polling, which I believe might have too much variation and uncertainty.</p>
+<pre><code>## `summarise()` has grouped output by &#39;year&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre><code>## Joining, by = &quot;year&quot;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+<pre><code>## 
+## Call:
+## lm(formula = D_majorvote_pct ~ average_support, data = house_polls_d)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.8836 -1.8807 -0.1731  1.5719  6.7762 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     34.41894    4.47547   7.691 5.02e-09 ***
+## average_support  0.37031    0.09248   4.004 0.000309 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.556 on 35 degrees of freedom
+## Multiple R-squared:  0.3142, Adjusted R-squared:  0.2946 
+## F-statistic: 16.03 on 1 and 35 DF,  p-value: 0.0003085</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = R_majorvote_pct ~ average_support, data = house_polls_r)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.1610 -0.9201 -0.1641  1.6379  4.7799 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     29.29204    3.28097   8.928 1.51e-10 ***
+## average_support  0.45979    0.08126   5.658 2.18e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.231 on 35 degrees of freedom
+## Multiple R-squared:  0.4777, Adjusted R-squared:  0.4628 
+## F-statistic: 32.02 on 1 and 35 DF,  p-value: 2.179e-06</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+</div>
