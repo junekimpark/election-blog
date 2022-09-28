@@ -6,7 +6,17 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 19 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 26 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog 3: Polling</title>
+      <link>http://example.org/post/2022-09-26-blog-3-polling/</link>
+      <pubDate>Mon, 26 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-09-26-blog-3-polling/</guid>
+      <description>Introduction: This week, I focused on polling to help predict the 2022 House party seat share (%) for Democrats and Republicans.
+What Do Forecasters Do? FiveThirtyEight’s approach to forecasting congressional elections is as follows, “take lots of polls, perform various types of adjustments to them, and then blend them with other kinds of empirically useful indicators (what we sometimes call “the fundamentals”) to forecast each race. Then they account for the uncertainty in the forecast and simulate the election thousands of times” (Silver, 2022).</description>
+    </item>
+    
     <item>
       <title>Blog 2: Economy and Elections</title>
       <link>http://example.org/post/2022-09-19-blog-2-economy-and-elections/</link>

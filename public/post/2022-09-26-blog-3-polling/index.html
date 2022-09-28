@@ -1,13 +1,67 @@
----
-title: 'Blog 3: Polling'
-author: "June Park"
-date: '2022-09-26'
-output: pdf_document
-categories: []
-tags: []
-slug: []
----
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<title>Blog 3: Polling &middot; My New Hugo Site</title>
+
+		
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" href="/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
+
+		<script src="/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">My New Hugo Site</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        June Park
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-09-26 00:00:00 &#43;0000 UTC">September 26, 2022</time>
+</div>
+
+		<h1 class="post-title">Blog 3: Polling</h1>
+<div class="post-line"></div>
+
+		
+
+		
 
 
 <div id="introduction" class="section level2">
@@ -22,7 +76,7 @@ slug: []
 </div>
 <div id="what-is-the-generic-congressional-ballot" class="section level2">
 <h2>What is the generic congressional ballot?</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-26-blog-3-polling/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>The generic congressional ballot is a poll that asks voters which party they would support in the election, rather than individual candidates. The question is usually something like this, “If the elections for U.S. Congress were being held today, would you vote for the Republican Party’s candidate or the Democratic Party’s candidate for Congress in your district?”</p>
 <p>Drawing upon Gelman and King (1993) again, I made the decision to filter the generic ballot polling data for only polls 52 days away from or closer to the election because the closer the poll is to the actual election day, the more likely it is to be closer to the actual election result. The 52 day cutoff was chosen because I was limited by the data; the closest poll to election day in 1952 was 51.5 days. Thus, the graph above shows the average of all the polls, before and including 52 days away from election day, for one year. In this week’s blog, I did not include any weights like pollster quality and simply filtered for the relevancy. As you can see in the graph, in the earlier elections, the Democrats were consistently getting higher scores than their Republican counterparts, but in the more recent elections, the gap between support for Democrats and Republicans has dramatically decreased.</p>
 </div>
@@ -73,9 +127,9 @@ slug: []
 <p>The linear regression model for the Republican House seat share (%) showed similar results. For every one percentage point increase in the average generic ballot poll score for Republicans, there is a 1.175 percentage increase in Republican House seat share, which was also statistically significant at the 9% confidence level. The R squared is 0.606, which means that generic ballot polling alone explained 60.6% of the variation in Republican House seat share.</p>
 <p>These two linear regression models contribute to the common idea that the generic ballot is a strong predictor of the election results.</p>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-26-blog-3-polling/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-26-blog-3-polling/index_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
 <p>Using the latest data from FiveThirtyEight, I averaged all of the generic ballot polls for 2022 from 52 days from and closer to the election. The support for Democrats is 44.91%, while the support for Republicans is 42.71%. Then using my polling model, I predict that in the 2022 House elections <strong>Democrats</strong> will win <strong>52%</strong> of the seat share, while the <strong>Republicans</strong> will win <strong>48%</strong> of the seat share.</p>
 </div>
 <div id="alternative-polling-model-without-2008" class="section level2">
@@ -184,3 +238,25 @@ House Vote (given by class)
 House Generic Ballot Polls 1948-2020 (given by class)
 House Generic Ballot Polls 2022 (FiveThirtyEight)</p>
 </div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/post/2022-09-19-blog-2-economy-and-elections/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-09-28 17:39:49.899748 -0400 EDT m=&#43;0.081062725">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>
