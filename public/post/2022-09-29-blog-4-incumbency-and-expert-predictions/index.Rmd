@@ -1,0 +1,75 @@
+---
+title: 'Blog 4: Incumbency and Expert Predictions'
+author: June Park
+date: '2022-09-29'
+slug: []
+categories: []
+tags: []
+---
+
+```{r, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(ggrepel)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+library(stringr)
+# data
+house <- read_csv("house_popvote_seats.csv")
+polls <- read_csv("polls_df.csv")
+polls2022 <- read_csv("generic_ballot_polls_2022.csv")
+rdi_quarterly <- read_csv("RDI_quarterly.csv")
+```
+
+```{r, include = FALSE}
+# historical results dataframe
+historical_results <- read_csv("house party vote share by district 1948-2020.csv") %>% 
+  clean_names()
+
+# Load 116th congress = 2018
+cd116 <- congressional_districts(
+  state = NULL,
+  cb = FALSE,
+  resolution = "500k",
+  year = 2018)
+
+historical_results$st_fips <- str_pad(historical_results$st_fips, 2, pad = "0") # add 0 in front of st_fips
+historical_results$district_num <- str_pad(historical_results$district_num, 2, pad = "0") # add 0 in front of district_num
+
+historical_results <- historical_results %>% 
+  mutate(GEOID = paste0(st_fips, district_num)) # Create GEOID column to match with cd116 dataframe
+
+# filter for 2018
+historical_results_2018 <- historical_results %>% 
+  filter(race_year == 2018) %>% 
+  select(state, race_year, area, rep_votes_major_percent, dem_votes_major_percent, GEOID)
+
+# left join 2018 and sf
+map_2018 <- left_join(historical_results_2018, cd116, by = "GEOID") %>% 
+  filter(!state %in% c("Alaska","Hawaii")) %>% 
+  st_as_sf() %>% # do this or it won't recognize the geometry column for whatever reason
+  st_transform("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=sphere +units=m +no_defs") %>% 
+  # a piece of code that transforms the map so that it doesn't look all stretched out
+  ms_simplify() # to make running things quicker
+
+# map 2018 district-level results
+ggplot(data = map_2018) +
+  geom_sf(mapping = aes(fill = dem_votes_major_percent)) +
+  scale_fill_gradient2(low = "white", high = "darkblue", 
+                         name = "Democratic Vote Share (%)") +
+  theme_void() +
+  labs(title = "2018 Democratic Vote Share by Congressional District")
+```
+
