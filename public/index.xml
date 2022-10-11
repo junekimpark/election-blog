@@ -6,14 +6,25 @@
     <description>Recent content on June Park&#39;s Election Analytics Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 29 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 11 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Blog 4: Incumbency and Expert Predictions</title>
+      <title>Blog 5: The Air War - Advertisements</title>
+      <link>https://junekimpark.github.io/election-blog/post/2022-10-11-blog-5-the-air-war-advertisements/</link>
+      <pubDate>Tue, 11 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://junekimpark.github.io/election-blog/post/2022-10-11-blog-5-the-air-war-advertisements/</guid>
+      <description>Introduction This week, I explored the effect of political advertisements on the Democratic vote share of Congressional district level.
+## # A tibble: 152 × 5 ## state st_cd_fips model r_squared coefficient ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;list&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Alabama 0102 &amp;lt;lm&amp;gt; 1 0.276 ## 2 Alabama 0106 &amp;lt;lm&amp;gt; 0.995 -0.124 ## 3 Arizona 0401 &amp;lt;lm&amp;gt; 0.738 0.153 ## 4 Arizona 0402 &amp;lt;lm&amp;gt; 1.00 0.270 ## 5 Arizona 0405 &amp;lt;lm&amp;gt; 1 -0.</description>
+    </item>
+    
+    <item>
+      <title>Blog 4: Expert Predictions and Incumbency</title>
       <link>https://junekimpark.github.io/election-blog/post/2022-09-30-blog-4-incumbency/</link>
       <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
       
       <guid>https://junekimpark.github.io/election-blog/post/2022-09-30-blog-4-incumbency/</guid>
-      <description></description>
+      <description>Introduction: This week, I explored expert predictions and actual results of the 2018 Congressional elections at the district level. In addition, I explore incumbency as an independent variable for future models and predictions.
+2018 Congressional Elections at the District Level The above maps represent the Democratic and Republican vote share for each U.S. congressional district during the 2018 elections. There are districts where the vote share for either party is 0 or 100 and this is because there were uncontested elections.</description>
     </item>
     
     <item>

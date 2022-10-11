@@ -128,6 +128,7 @@ ggplot() +
                          name = "Two-Party \nVoteshare Margin") +
   theme_void() +
   labs(title = "2014 Two-Party Vote Share Margin by District")
+
 ```
 This map disaggregates the data so that one can examine the vote share margin at the congressional district level, which allows for more nuanced analysis than the previous maps simply at the state level. For example, in California, at the state-level it would usually be colored “blue” for a vote share margin favoring Democrats, but disaggregating the data to the congressional district level reveals districts where the Republican vote share was greater. In fact, at the state level, the Democratic total vote share was about 7% greater than the Republican total vote share. However, in California’s District 1, the Republican vote share was about 22% greater than the Democratic vote share. 
 

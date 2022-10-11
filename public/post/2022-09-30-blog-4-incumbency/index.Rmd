@@ -1,5 +1,5 @@
 ---
-title: 'Blog 4: Incumbency and Expert Predictions'
+title: 'Blog 4: Expert Predictions and Incumbency'
 author: June Park
 date: '2022-09-29'
 slug: []
@@ -10,6 +10,7 @@ tags: []
 ```{r, include = FALSE}
 # hide stuff
 knitr::opts_chunk$set(echo = FALSE)
+
 # libraries
 library(tidyverse)
 library(ggplot2)
@@ -26,12 +27,10 @@ library(tigris)
 library(leaflet)
 library(stringr)
 
-```
-
-```{r, include = FALSE}
 # historical results dataframe
 historical_results <- read_csv("house party vote share by district 1948-2020.csv") %>% 
   clean_names()
+
 # Load 116th congress = 2018
 cd116 <- congressional_districts(
   state = NULL,
@@ -39,30 +38,339 @@ cd116 <- congressional_districts(
   resolution = "500k",
   year = 2018)
 
-historical_results$st_fips <- str_pad(historical_results$st_fips, 2, pad = "0") # add 0 in front of st_fips
-historical_results$district_num <- str_pad(historical_results$district_num, 2, pad = "0") # add 0 in front of district_num
+# expert predictions
+expertpredictions <- read_csv("expert_rating.csv")
 
+# another expert predictions data set
+nationwide_expertpredictions <- read_csv("2018_ratings_share.csv")
+
+# incumbency data set
+incumbency <- read_csv("incumb_dist_1948-2020.csv")
+```
+
+## Introduction:
+This week, I explored expert predictions and actual results of the 2018 Congressional elections at the district level. In addition, I explore incumbency as an independent variable for future models and predictions.
+
+```{r, include = FALSE}
+# add 0 in front of st_fips
+historical_results$st_fips <- str_pad(historical_results$st_fips, 2, pad = "0") 
+# add 0 in front of district_num
+historical_results$district_num <- str_pad(historical_results$district_num, 2, pad = "0") 
+
+# Create GEOID column to match with cd116 dataframe
 historical_results <- historical_results %>% 
-  mutate(GEOID = paste0(st_fips, district_num)) # Create GEOID column to match with cd116 dataframe
+  mutate(GEOID = paste0(st_fips, district_num)) 
 
-# filter for 2018
+# create 2018 data frame
 historical_results_2018 <- historical_results %>% 
   filter(race_year == 2018) %>% 
-  select(state, race_year, area, rep_votes_major_percent, dem_votes_major_percent, GEOID)
+  select(state, race_year, area,district_num, cd, rep_votes_major_percent, dem_votes_major_percent, GEOID) %>% 
+  rename(district = district_num)
+
 # left join 2018 and sf
-
-
 map_2018 <- left_join(historical_results_2018, cd116, by = "GEOID") %>% 
   filter(!state %in% c("Alaska","Hawaii")) %>% 
   st_as_sf() %>% # do this or it won't recognize the geometry column for whatever reason
   st_transform("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=sphere +units=m +no_defs") %>% 
   # a piece of code that transforms the map so that it doesn't look all stretched out
   ms_simplify() # to make running things quicker
-# map 2018 district-level results
+```
+
+## 2018 Congressional Elections at the District Level
+```{r}
+# map 2018 Democratic district-level results
 ggplot(data = map_2018) +
   geom_sf(mapping = aes(fill = dem_votes_major_percent)) +
-  scale_fill_gradient2(low = "white", high = "darkblue", 
+  scale_fill_gradient2(low = "white", high = "navyblue", 
                          name = "Democratic Vote Share (%)") +
   theme_void() +
   labs(title = "2018 Democratic Vote Share by Congressional District")
+
+# map 2018 Republican district-level results
+ggplot(data = map_2018) +
+  geom_sf(mapping = aes(fill = rep_votes_major_percent)) +
+  scale_fill_gradient2(low = "white", high = "firebrick", 
+                         name = "Republican Vote Share (%)") +
+  theme_void() +
+  labs(title = "2018 Republican Vote Share by Congressional District")
 ```
+
+The above maps represent the Democratic and Republican vote share for each U.S. congressional district during the 2018 elections. There are districts where the vote share for either party is 0 or 100 and this is because there were uncontested elections. For example, when the Democratic vote share was 0 this means that there was an uncontested election where the Republican won. On the other hand, when the Democratic Vote share was 100 this means that there was an uncontested election where the Democrat won. In fact, there were 38 uncontested elections where the Democrat won. There were 3 uncontested elections where the Republican won.
+
+```{r, include = FALSE}
+# expert predictions
+# avg_rating: 1 = heavy D, 7 = heavy R
+
+# add 0 in front of district
+# expertpredictions$district <- str_pad(expertpredictions$district, 2, pad = "0") 
+
+# filter for 2018
+# expertpredictions_2018 <- expertpredictions %>% 
+  # filter(year == 2018) %>% 
+  # select(state, district, avg_rating)
+
+# left join historical and expert predictions
+# map_prediction_2018 <- left_join(map_2018, expertpredictions_2018, by = c("state", "district")) %>% 
+  # filter(!state %in% c("Alaska","Hawaii")) %>% 
+  # st_as_sf() %>% # do this or it won't recognize the geometry column for whatever reason
+  # st_transform("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=sphere +units=m +no_defs") %>% 
+  # a piece of code that transforms the map so that it doesn't look all stretched out
+  # ms_simplify() # to make running things quicker
+```
+
+```{r, include = FALSE}
+# map 2018 district-level expert predictions
+# ggplot(data = map_prediction_2018) +
+  # geom_sf(aes(fill = as.factor(avg_rating))) +
+  # scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                       # name = "Average Political Rating") +
+  # theme_void() +
+  # labs(title = "2018 Expert Predictions of Congressional District")
+```
+
+```{r, include = FALSE}
+# another expert predictions data set
+nationwide_expertpredictions <- nationwide_expertpredictions %>% 
+  rename(cd = District) # rename District to be cd for left_join
+
+# recoding things so that left_join will work 
+nationwide_expertpredictions[87, "cd"] <- "DE-AL" # Delaware At-Large
+nationwide_expertpredictions[233, "cd"] <- "MT-AL" # Montana At-Large
+nationwide_expertpredictions[247, "cd"] <- "ND-AL" # North Dakota At-Large
+nationwide_expertpredictions[352, "cd"] <- "SD-AL" # South Dakota At-Large
+nationwide_expertpredictions[413, "cd"] <- "VT-AL" # Vermont At-Large
+nationwide_expertpredictions[435, "cd"] <- "WY-AL" # Wyoming At-Large
+
+# left join
+map_fullprediction_2018 <- left_join(map_2018, nationwide_expertpredictions, by = "cd") %>% 
+  st_as_sf() %>% # do this or it won't recognize the geometry column for whatever reason
+  st_transform("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=sphere +units=m +no_defs") %>% 
+  # a piece of code that transforms the map so that it doesn't look all stretched out
+  ms_simplify() # to make running things quicker
+```
+
+## Expert Predictions
+
+```{r}
+# nationwide 2018 district-level expert predictions
+ggplot() +
+  geom_sf(data = map_fullprediction_2018, mapping = aes(fill = avg)) +
+  scale_fill_gradient2(low = "navyblue", mid = "white", high = "firebrick3", limits=c(1,7), midpoint= 4, 
+                      name = "Expert Predictions\n(Solid D = 1, Solid R = 7)") +
+  theme_void() +
+  labs(title = "2018 Expert Predictions of Congressional Districts",
+       caption = "Expert Predictions = The average of Cook Political Report,\nInside Elections, and Larry Sabato’s Crystal Ball scores.")
+```
+
+This week, I used 2018 expert predictions from Cook Political Report, Inside Elections, and Larry Sabato’s Crystal Ball. I averaged their scores on the 1-7 scale, where 1 represents Solid Democrat, 4 represents Toss-Up, and 7 represents Solid Republican. The above map represents the average expert prediction score for each congressional district. 
+
+```{r, include = FALSE}
+# adding the voteshare margins based on expert rating scale
+# 1 --> 53% for democrats and 7 --> 47% for democrats
+map_fullprediction_2018 <- map_fullprediction_2018 %>% 
+  mutate(cpr_voteshare = case_when(
+    cpr_num == 1 ~ 54,
+    cpr_num == 2 ~ 53,
+    cpr_num == 3 ~ 52,
+    cpr_num == 4 ~ 50,
+    cpr_num == 5 ~ 48,
+    cpr_num == 6 ~ 47,
+    cpr_num == 7 ~ 46)) %>%
+  mutate(inside_elections_voteshare = case_when(
+    inside_elections_num == 1 ~ 54,
+    inside_elections_num == 2 ~ 53,
+    inside_elections_num == 3 ~ 52,
+    inside_elections_num == 3.5 ~ 51,
+    inside_elections_num == 4 ~ 50,
+    inside_elections_num == 4.5 ~ 49,
+    inside_elections_num == 5 ~ 48,
+    inside_elections_num == 6 ~ 47,
+    inside_elections_num == 7 ~ 46)) %>%
+  mutate(crystal_ball_voteshare = case_when(
+    crystal_ball_num == 1 ~ 54,
+    crystal_ball_num == 2 ~ 53,
+    crystal_ball_num == 3 ~ 52,
+    crystal_ball_num == 4 ~ 50,
+    crystal_ball_num == 5 ~ 48,
+    crystal_ball_num == 6 ~ 47,
+    crystal_ball_num == 7 ~ 46))
+
+# create avg_voteshare column (average of all the transformed prediction "voteshares")
+map_fullprediction_2018 <- map_fullprediction_2018 %>% 
+  mutate(avg_voteshare = (cpr_voteshare + inside_elections_voteshare + crystal_ball_voteshare) /3,
+         margin = dem_votes_major_percent - avg_voteshare)
+```
+
+## But how accurate were these expert predictions?
+
+```{r}
+# 2018 district-level difference between expert predictions and actual
+# blue = democrats performed BETTER than average expert predictions
+# red = democrats performed WORSE than average expert predictions
+ggplot() +
+  geom_sf(data = map_fullprediction_2018, mapping = aes(fill = margin)) +
+  scale_fill_gradient2(low = "firebrick", mid = "white", high = "navyblue", midpoint = 0,
+                      name = "Difference between Actual Results\nand Expert Predictions") +
+  theme_void() +
+  labs(title = "Accuracy of 2018 Expert Predictions of Congressional Districts",
+       subtitle = "Based on Democratic Vote Share",
+       caption = "Blue = Democrats performed BETTER than average expert predictions\nRed = Democrats performed WORSE than average expert predictions")
+```
+
+I created an accuracy map of the expert predictions based on the difference between the actual results of the election and average expert predictions. The closer to 0 (or white) the district is, the more accurate the average expert prediction was. In addition, blue represents districts where Democrats performed BETTER than average expert prediction and red represents districts where Democrats performed WORSE than average expert predictions. 
+
+The caveat to this accuracy map is that I transformed the expert prediction scores from an arbitrary scale of 7 to subjective vote share percentages. For example, for districts with a score of 1 (Solid Democrat), I gave them 54% for Democratic vote share; with a score of 7 (Solid Republican), I gave the districts 46% for Democratic vote share. Thus, this transformation of scale to vote share percentages struggles in especially districts that were uncontested. For example, although the expert predictions accurately predicted that a district with a Democratic incumbent in an uncontested election  is “Solid Democrat,” the vote share will be 54%, rather than 100% giving the prediction an “error” of 46%. 
+
+## Incumbency
+House of Representatives incumbents in the United States enjoy electoral and structural advantages such as media coverage and campaign finance access. However, Adam Brown points out that “existing research has not asked whether individual voters actually prefer incumbents over newcomers, other things being equal.” Thus, he ran a randomized survey experiment to test this and found that “voters respond only minimally—if at all—to incumbency status once the structural advantages are held constant” (Brown, 2014). This is perhaps contrary to many people’s initial thoughts, especially when it comes to the commonly-held notion that voters like their local congressperson just because they are their local congressperson. 
+
+Using historical data from 1948-2020, I wanted to see how often incumbents won. 
+In total, there were 2424 uncontested and 13643 contested elections. Most of the uncontested elections were won by the incumbents, but there were races where there was no incumbent candidate, only an incumbent party. Thus, I focus on contested elections to explore incumbency win rates.
+
+I looked at the incumbent wins by party. 
+
+```{r, include = FALSE}
+# uncontested elections = 2424
+# contested elections = 13643
+historical_results <- historical_results %>% 
+  mutate(contestation = case_when(dem_votes_major_percent == 0 ~ "uncontested",
+                                    dem_votes_major_percent == 100 ~ "uncontested",
+                                    TRUE ~ "contested"))
+
+# make an incumbency_win_status column
+# problem: IncumbentLost loops in races where there were no Incumbents (so like Challenger vs NA or Challenger vs Challenger)
+incumbents <- historical_results %>% 
+  mutate(incumbency_win_status = case_when(dem_status == "Incumbent"  & winner_party == "D" ~ "IncumbentWon",
+                                       rep_status == "Incumbent"  & winner_party == "R" ~ "IncumbentWon",
+                                       TRUE ~ "IncumbentLost"))
+
+# in the 7523 races where the Democrat was the incumbent:
+  # Democrats won 7218 times
+  # Republicans pulled 305 upsets
+# Democratic incumbents winning their race: 95.95%
+historical_results %>% 
+  filter(dem_status == "Incumbent") %>% 
+  group_by(winner_party) %>% 
+  summarize(count = n())
+
+# in the 6138 races where the Republican was the incumbent:
+  # Republicans won 5768 times
+  # Democrats pulled 370 upsets
+# Republican incumbents winning their race: 93.97%
+historical_results %>% 
+  filter(rep_status == "Incumbent") %>% 
+  group_by(winner_party) %>% 
+  summarize(count = n())
+```
+
+```{r}
+# in the 5995 CONTESTED races where the Democrat was the incumbent:
+  # Democrats won 5696 times
+  # Republicans pulled 299 upsets
+# Democratic incumbents winning their CONTESTED race: 95.01%
+historical_results %>% 
+  filter(dem_status == "Incumbent", contestation == "contested") %>% 
+  group_by(winner_party) %>% 
+  summarize(count = n())
+```
+
+In the 5995 CONTESTED races where the Democrat was the incumbent, Democrats won 5696 times, while Republicans pulled 299 upsets. Thus, the rate at which Democratic incumbents won their CONTESTED race was a resounding 95.01%. 
+
+```{r}
+# in the 5559 CONTESTED races where the Republican was the incumbent:
+  # Republicans won 5189 times
+  # Democrats pulled 370 upsets
+# Democratic incumbents winning their CONTESTED race: 93.34%
+historical_results %>% 
+  filter(rep_status == "Incumbent", contestation == "contested") %>% 
+  group_by(winner_party) %>% 
+  summarize(count = n())
+```
+
+In the 5559 CONTESTED races where the Republican was the incumbent, Republicans won 5189 times while the Democrats pulled 370 upsets. The rate at which Republican incumbents won their CONTESTED race was slightly smaller than the Democrats, but nonetheless resounding, 93.34%. 
+
+Ideally, this week I would have loved to explore if incumbency at the district-level would help predict Democratic seat share, but I found that trying to measure incumbency at the district level is more complicated than meets the eye. Thus, I will take some more time to parse out the intricacies of incumbency in the future and meanwhile, just focus on the incumbent president’s party for this week.
+
+```{r, include = FALSE}
+# separate models for incumbents and challengers
+
+# 2022 model 
+# y = democratic vote share
+# x = whether or not there is an incumbent in the race; previous elections' incumbency result
+
+```
+
+## Incumbent President’s Party
+I ran a simple linear regression model trying to explain Democratic seat share percentage by whether the incumbent President’s party is Democrat. 
+
+```{r, include = FALSE}
+# data for this week's model
+house <- read_csv("house_popvote_seats.csv")
+polls <- read_csv("polls_df.csv")
+
+# added R_seat_percentage and D_seat_percentage columns
+house <- house %>% 
+  mutate(R_seat_percentage = (R_seats) / (R_seats + D_seats) * 100,
+         D_seat_percentage = (D_seats) / (D_seats + R_seats) * 100)
+
+# cleaning polls df
+polls$poll_date <- as.Date(polls$poll_date, format = "%m/%d/%Y")
+
+cleaned_polls <- polls %>% 
+  filter(days_until_election <= 52) %>% # the closest poll to election day for 1952 was 51.5
+  group_by(year, party) %>% 
+  summarise(average_support = mean(support))
+
+# left join house and polls
+house_polls <- house %>% 
+  left_join(cleaned_polls)
+
+# combined data set for pnly Democratic Party polls 
+house_polls_d <- house_polls %>% 
+  filter(party == "D") %>% 
+  mutate(midterm = ifelse(year %% 4, 1, 0)) %>% 
+  mutate(dem_is_president = case_when(president_party == "D" ~ "Yes",
+                                      TRUE ~ "No"))
+```
+
+```{r, include = FALSE}
+# just incumbent party linear regression model
+lm_imcumbent_president <- lm(D_seat_percentage ~ dem_is_president, data = house_polls_d)
+
+# incumbent president + polling linear regression model
+lm_imcumbent_poll <- lm(D_seat_percentage ~ dem_is_president + average_support, data = house_polls_d)
+
+# predictions for 2022 just by incumbent president's party
+predict_2022_dem <- data.frame(dem_is_president = "Yes")
+
+predict(lm_imcumbent_president, newdata = predict_2022_dem) # Democrat = 55.0798
+```
+
+```{r}
+# Democratic linear regression model president's party
+stargazer(lm_imcumbent_president, 
+          type = "text",
+          dep.var.labels = "Democrat House Seat Share (%)",
+          covariate.labels = "When Incumbent President's Party is Democrat")
+```
+
+The negative coefficient of whether the incumbent President’s party is Democrat indicates that when the incumbent President’s party is Democrat, the Democratic seat share percentage is about 0.397% less than when the incumbent President’s Party is NOT Democrat aka Republican. However, it is important to note that not only was this coefficient not statistically significant, the R squared was 0.001, a very low number. Using the fact that 2022’s incumbent president’s party is Democrat, this model predicts that the Democratic seat share in 2022 will be 55.0798.
+
+```{r}
+# Democratic linear regressional model president's party + 
+stargazer(lm_imcumbent_poll, 
+          type = "text",
+          dep.var.labels = "Democrat House Seat Share (%)",
+          covariate.labels = c("When Incumbent President's Party is Democrat", "Generic Ballot Polling"))
+```
+
+When I add average generic ballot polling from [last week](https://junekimpark.github.io/election-blog/post/2022-09-26-blog-3-polling/), the coefficient of whether the incumbent President’s party becomes more negative (-0.397 to -0.6993). However, once again, this coefficient is not statistically significant and the adjusted R squared is less than last week’s polling model.
+
+Source: 
+Adam R. Brown. Voters Don’t Care Much About Incumbency. Journal of Exper- imental Political Science, 1(2):132–143, 2014.
+
+Data:
+House Vote (given by class)
+118th Congressional Shapefiles (TIGRIS)
+Expert Predictions (given by class)
+House Generic Ballot Polls 1948-2020 (given by class)

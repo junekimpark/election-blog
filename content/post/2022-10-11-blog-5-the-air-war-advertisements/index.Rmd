@@ -1,0 +1,82 @@
+---
+title: 'Blog 5: The Air War - Advertisements'
+author: June Park
+date: '2022-10-11'
+slug: []
+categories: []
+tags: []
+---
+
+```{r, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+
+incumbent <- read_csv("incumb_dist_1948-2022 (2).csv")
+ads <- readRDS("ads_2006_2018 (1).rds")
+polls <- read_csv("polls_df.csv")
+```
+
+## Introduction
+This week, I explored the effect of political advertisements on the Democratic vote share of Congressional district level.
+
+```{r, include = FALSE}
+# separate ads data for democrats
+ads_dems <- ads %>%
+  filter(party == "Democrat") %>%
+  group_by(cycle, state, district, st_cd_fips) %>%
+  summarize(count = n()) %>%
+  rename(year = cycle)
+
+ads_reps <- ads %>% 
+  filter(party == "Republican") %>%
+  group_by(cycle, state, district, st_cd_fips) %>%
+  summarize(count = n()) %>%
+  rename(year = cycle)
+
+ads_share <- full_join(ads_dems, ads_reps, by = c("year", "st_cd_fips")) %>%
+  mutate(dem_ad_share = count.x/(count.x + count.y) * 100) %>%
+  drop_na(dem_ad_share)
+
+dem_results <- incumbent %>% 
+  select(year, state, st_cd_fips, DemVotesMajorPercent)
+```
+
+```{r}
+# training data
+train_data <- full_join(dem_results, ads_share, by = c("year", "st_cd_fips")) %>%
+  filter(year < 2018) %>%
+  drop_na() %>%
+  group_by(state, st_cd_fips) %>%
+  filter(n() > 1) %>%
+  group_nest() %>%
+  mutate(data = map(data, ~unnest(., cols = c())))
+
+# building models
+models <- train_data %>% 
+  mutate(model = map(data, ~lm(DemVotesMajorPercent ~ dem_ad_share, 
+                                  data = .x))) %>% 
+  select(-data)
+
+# model results
+model_results <- models %>% 
+  mutate(r_squared = map_dbl(model, ~summary(.x)$r.squared), # r-squared values 
+         coefficient = map_dbl(model, ~summary(.x)$coefficients[2])) # coefficients
+```
+
+```{r}
+model_results
+```
+
