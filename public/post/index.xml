@@ -13,8 +13,7 @@
       <pubDate>Tue, 11 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>https://junekimpark.github.io/election-blog/post/2022-10-11-blog-5-the-air-war-advertisements/</guid>
-      <description>Introduction This week, I explored the effect of political advertisements on the Democratic vote share of Congressional district level.
-## # A tibble: 152 × 5 ## state st_cd_fips model r_squared coefficient ## &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;list&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Alabama 0102 &amp;lt;lm&amp;gt; 1 0.276 ## 2 Alabama 0106 &amp;lt;lm&amp;gt; 0.995 -0.124 ## 3 Arizona 0401 &amp;lt;lm&amp;gt; 0.738 0.153 ## 4 Arizona 0402 &amp;lt;lm&amp;gt; 1.00 0.270 ## 5 Arizona 0405 &amp;lt;lm&amp;gt; 1 -0.</description>
+      <description>Introduction This week, I explored the effect of political advertisements on the Democratic vote share at the Congressional district level. Using political advertisement data from 2006-2018, I am able to run models for 152 congressional districts. Then, I specifically looked at Pennsylvania’s 10th district to make a model that includes both Democratic advertisement share (%) and Democratic generic ballot polling and to make a prediction for this district’s Democratic vote share in 2022.</description>
     </item>
     
     <item>

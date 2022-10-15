@@ -7,7 +7,7 @@ categories: []
 tags: []
 ---
 
-```{r, include = FALSE}
+```{r libraries, include = FALSE}
 # hide stuff
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -30,9 +30,17 @@ polls <- read_csv("polls_df.csv")
 ```
 
 ## Introduction
-This week, I explored the effect of political advertisements on the Democratic vote share of Congressional district level.
+This week, I explored the effect of political advertisements on the Democratic vote share at the Congressional district level. Using political advertisement data from 2006-2018, I am able to run models for 152 congressional districts. Then, I specifically looked at Pennsylvania’s 10th district to make a model that includes both Democratic advertisement share (%) and Democratic generic ballot polling and to make a prediction for this district’s Democratic vote share in 2022. 
 
-```{r, include = FALSE}
+In the United States, it’s not election season without a bombardment of political ads. According to a [CNBC article from September 2022](https://www.cnbc.com/2022/09/26/2022-midterms-candidates-spend-over-6point4-billion-on-ads-making-race-one-of-the-most-expensive-ever.html), campaigns in the 2022 elections have poured $6.4 billion into TV, radio and digital ads for U.S. House, Senate, gubernatorial and local races. The 2022 election is on track to become the most expensive election ever. But do these ads actually change voters’ opinions or are they just a waste of money?
+
+### Prior Literature
+Gerber and authors ran an experiment on the effects of TV and radio advertising on voting preferences. The authors found a “rapid decay of advertising effects” in which “televised ads have strong but short-lived effects on voting preferences” (Gerber et al., 2011). This matches with the exploration we did in section where we found that both Democrats and Republicans spend the most on TV ads closest to the election. 
+
+## Do Ads Matter in 152 Congressional Districts from 2006-2018?
+With this theoretical background, I now explore the relationship between Democratic advertisement share (the percentage of ads run in the district that were for the Democratic candidate) and Democratic vote share in 152 congressional districts from 2006-2018. My main data set that I will be using is from the Wesleyan Media Project, which tracks political TV advertisements.
+
+```{r cleaning ads and vote data, include = FALSE}
 # separate ads data for democrats
 ads_dems <- ads %>%
   filter(party == "Democrat") %>%
@@ -54,7 +62,7 @@ dem_results <- incumbent %>%
   select(year, state, st_cd_fips, DemVotesMajorPercent)
 ```
 
-```{r}
+```{r creating models, include = FALSE}
 # training data
 train_data <- full_join(dem_results, ads_share, by = c("year", "st_cd_fips")) %>%
   filter(year < 2018) %>%
@@ -73,10 +81,124 @@ models <- train_data %>%
 # model results
 model_results <- models %>% 
   mutate(r_squared = map_dbl(model, ~summary(.x)$r.squared), # r-squared values 
-         coefficient = map_dbl(model, ~summary(.x)$coefficients[2])) # coefficients
+         coefficient = map_dbl(model, ~summary(.x)$coefficients[2])) %>%  # coefficients 
+  select(state, st_cd_fips, r_squared, coefficient)
 ```
 
-```{r}
-model_results
+I ran a simple linear regression model between Democratic vote share and Democratic ad share for 152 congressional districts. The table below shows each district’s linear regression model and its r-squared value and coefficient for Democratic ad share. To interpret the coefficient, it is for every 1% increase in Democratic ad share, there is X% increase/decrease in Democratic vote share. 
+
+```{r table of 152 models}
+# table of 152 linear regression models
+print(model_results, n=152)
 ```
 
+To better understand and visualize these 152 different linear regression models, I created graphs displaying the distributions of the coefficients and r-square values.
+
+```{r graph 1}
+# distribution of coefficients of linear regression models
+ggplot(data = model_results, mapping = aes(x = coefficient)) +
+  geom_histogram(bins = 15, aes(y=..count../sum(..count..)), fill = "skyblue", color = "navyblue") +
+  labs(title = "Distribution of Coefficients of 152 Districts' Linear Regression Models of\nDemocratic Vote Share by Democratic Ad Share",
+       x = "Coefficients",
+       y = "Proportion",
+       caption = "Interpret coefficient as every 1% increase in Democratic ad share\n X% increase/decrease in Democratic vote share in the district.\nData was available for 152 congressional districts.") +
+  theme_bw()
+```
+
+This graph is the distribution of the coefficients of 152 congressional districts from 2006-2018. Almost all of the coefficients fell in the middle “0” range. However, this graph is a bit misleading because the distribution is so widespread that it simplifies the middle of the distribution. Thus, I “zoom” into the middle of the graph to better see the distribution.
+
+```{r graph 1.5}
+# zoom into the center
+ggplot(data = model_results, mapping = aes(x = coefficient)) +
+  geom_histogram(bins = 20, aes(y=..count../sum(..count..)), fill = "skyblue", color = "navyblue") +
+  labs(title = "Distribution of Coefficients of 152 Districts' Linear Regression Models of\nDemocratic Vote Share by Democratic Ad Share",
+       subtitle = "Focused on the -2 to 2 range",
+       x = "Coefficients",
+       y = "Proportion",
+       caption = "Interpret coefficient as every 1% increase in Democratic ad share\n X% increase/decrease in Democratic vote share in the district.\nData was available for 152 congressional districts.") +
+  xlim(-2, 2) +
+  theme_bw()
+```
+
+This is the same graph as above but zoomed into the -2 to 2 range. As expected, this “zoom in” has allowed for more nuance in the distribution. Although the distribution is still roughly normally shaped, there is slightly a greater concentration in the positive coefficient zone (>0). This perhaps indicates that there are more districts where there is a *positive relationship* between Democratic ad share and Democratic vote share than the opposite. In other words, the greater the Democratic ad share, the greater the Democratic vote share.  
+
+```{r graph 2}
+# distribution of r squared values
+ggplot(data = model_results, mapping = aes(x = r_squared)) +
+  geom_histogram(bins = 20, aes(y=..count../sum(..count..)), fill = "purple", color = "navyblue") +
+  labs(title = "Distribution of R squared values of 152 Districts' Linear Regression Models of\nDemocratic Vote Share by Democratic Ad Share",
+       x = "R squared",
+       y = "Proportion",
+       caption = "Data was available for 152 congressional districts.") +
+  theme_bw()
+```
+
+This graph is the distribution of the r-squared values of 152 congressional districts from 2006-2018. Almost 50% of the models have r-squared values of 1, which at first glance is exciting, especially considering that I have had models with negative adjusted r-squared values, but I will talk more about this in my limitations section. 
+
+## Pennsylvania’s 10th Congressional District
+I was not able to run predictions for all 152 congressional districts like I did with the models, so I focused on Pennsylvania’s 10th Congressional District as an example. The current district is located in [south-central region of the state]“https://en.wikipedia.org/wiki/Pennsylvania%27s_10th_congressional_district”, but this is after it was redrawn in 2018. Prior to 2019, the district was located in the northeastern part of the state. This issue of gerrymandering is further explored in my limitations section. Since 2010, the seat, in its many different forms, has been held by a Republican, but prior to 2010 it has been held by a Democrat. The elections in this district are a bit varied with close elections like in 2006 where the Democratic candidate won with 52.90% of the vote or blow out elections like in 2016 where the Republican incumbent won with 70.2% of the vote. 
+
+```{r PA 10, include = FALSE}
+# cleaning polls df
+polls$poll_date <- as.Date(polls$poll_date, format = "%m/%d/%Y")
+
+cleaned_polls <- polls %>% 
+  filter(days_until_election <= 52) %>% # the closest poll to election day for 1952 was 51.5
+  group_by(year, party) %>% 
+  summarise(average_support = mean(support))
+
+cleaned_polls_d <- cleaned_polls %>% 
+  filter(party =="D")
+
+# Pennsylvania's 10 district (2006-2018)
+  # no data for 2008 unfortunately
+pa_10_ads <- ads_share %>% 
+  filter(st_cd_fips == 4210)
+
+# left join for results
+pa_10_join <- left_join(pa_10_ads, dem_results, by = c("year", "st_cd_fips"))
+
+# left join for polling
+pa_10_final <- left_join(pa_10_join,cleaned_polls_d)
+
+# linear regression model for Pennnsylvania's 10th district
+lm_pa_10 <- lm(DemVotesMajorPercent ~ dem_ad_share + average_support, data = pa_10_final)
+
+# creating 2022 data
+predict_2022_dem <- data.frame(dem_ad_share = 58.66687, # based off of 2018 data
+                               average_support = 45.8) # took from FiveThirtyEight
+
+# prediction for 2022
+predict(lm_pa_10, newdata = predict_2022_dem) # Democrats in PA 10 = 46.83524%
+```
+
+Besides the interesting nature of its election history, I picked PA-10 because the Wesleyan Media Project had data on it for every election between 2006-2018 except 2008. 
+
+I ran a linear regression model for Democratic vote share in PA-10 based on Democratic ad share and nation-wide generic ballot polling for the Democrats.
+
+```{r PA 10 linear regression model}
+# stargazer for linear regression model
+stargazer(lm_pa_10, 
+          type = "text",
+          title = "Pennsylvania's 10th Congressional District",
+          dep.var.labels = "Democratic Vote Share (%)",
+          covariate.labels = c("Democratic Ad Share (%)", "Generic Ballot Polling"))
+```
+
+From this model, we see that for every 1% increase in Democratic ad share, we expect a 0.352% increase in Democratic vote share in PA-10. Similarly, for every 1% increase in the nation-wide generic ballot polling for the Democrats, we expect a 1.440% increase in Democratic vote share in PA-10. The coefficient for Democratic ad share is statistically significant at p=0.05, while the coefficient for generic ballot is statistically significant at p=0.1. Furthermore, the adjusted r-squared value is an astonishing 0.935. However, we must also account for the fact that there are only 5 observations in this model, thus the adjusted r-squared value is not perfect. 
+
+###What is the Democratic vote share prediction for Pennsylvania’s 10th district in 2022?
+Because the data from the Wesleyan Media Project does not have data for 2020 nor 2022, I had to use the 2018 Democratic ad share as a stand-in for 2022. This was 58.67%. In addition, I pulled October 14’s generic ballot polling for Democrats from FiveThirtyEight as the generic ballot polling for 2022. This was 45.8%.
+
+Using the linear regression model from above and this data for 2022, *I predict that the Democratic vote share for Pennsylvania’s 10th district in 2022 will be 46.84%.*
+
+## Limitations
+The first limitation with my 152 district models is that the distribution of r-squared values was overwhelmingly 1. This is a bit suspicious and I am in the midst of trying to figure out what happened. I did filter out all districts that only had one row (which would then result in a r-squared value of 1). The second limitation I faced was with my model for PA-10. This district went through multiple rounds of gerrymandering that makes it hard for me to predict for the current district. This raises a potential difficulty I will face if I want to continue doing district-level modeling and predicting. The third limitation is that the Wesleyan Media Project only had data up until 2018 so I had to use the 2018 data as a stand-in for 2022, but we know from earlier that this 2022 election cycle is on-track to become the most expensive, so the Democratic ad share percentage might be different. The fourth limitation is that this data only looks at TV advertisements. It would be interesting to look at if and how online political advertising affects voter behavior. 
+
+## Conclusion
+This week, I explored at the district-level but faced many problems. Thus, I will consider if I want to continue doing district-level predictions in the future. Nonetheless, it was a good exercise. 
+
+Data:
+House Vote (given by class)
+Wesleyan Media Project (2006-2018) (given by class)
+House Generic Ballot Polls 1948-2020 (given by class)
