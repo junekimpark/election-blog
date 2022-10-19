@@ -23,7 +23,11 @@ library(sf)
 library(janitor)
 library(leaflet)
 library(stringr)
+library(ggthemes)
+library(gridExtra)
+```
 
+```{r data, include = FALSE}
 cvap <- read_csv("cvap_district_2012-2020_clean.csv")
 electionresults <- read_csv("incumb_dist_1948-2020 (3).csv")
 genericballot <- read_csv("polls_df.csv")
@@ -31,9 +35,12 @@ gdp_q <- read_csv("GDP_quarterly.csv")
 incumbency <- read_csv("incumb.csv")
 ```
 
-## 2012 - 2022
+## Introduction
+This week, I explore the effects of voter turnout on the Democratic vote share at the Congressional district level. Working together with Lucy Ding and Kaela Ellis, we created models for all 435 Congressional districts (for the first time this semester!). A more extensive look at all of our combined work can be found in this [presentation](https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing), which we presented in class on Tuesday, October 18 to GOV 1347. 
 
-```{r adding turnout and generic ballot}
+The models with voter turnout contain election data from 2012-2022. While, the models without voter turnout are more extensive with data all the way back to 1950. 
+
+```{r adding turnout and generic ballot, include = FALSE}
 # renaming geoid to st_cd_fips for left join
 cvap <- cvap %>% 
   rename(st_cd_fips = geoid) 
@@ -65,9 +72,7 @@ turnout <- left_join(turnout, polls_d, by = "year") %>%
          DemVotesMajorPercent, st_cd_fips, cvap, turnout, average_support)
 ```
 
-```{r adding economy and incumbency}
-# Create quarter change data and join all together with popular vote
-
+```{r adding economy and incumbency, include = FALSE}
 # Filter out data for Q6
 gdp_q6 <- gdp_q %>%
   filter(year >= 2012, 
@@ -80,11 +85,17 @@ gdp_q7 <- gdp_q %>%
          quarter_cycle == 7) %>% 
   rename(gdp_q7 = GDPC1)
 
-# creating gdp_q_final
+# Creating gdp_q_final
 gdp_q_final <- left_join(gdp_q7, gdp_q6, by = "year") %>% 
   mutate(gdp_q7_q6 = (gdp_q7 - gdp_q6) / gdp_q6 * 100) %>% # percent difference
   rename(gdp_percent_difference = gdp_q7_q6) %>% 
   select(year, gdp_percent_difference)
+
+# Creating incumbency
+incumbency <- electionresults %>%  
+  mutate(incumb = ifelse(winner_candidate == "DemCandidate",1,0)) %>% 
+  mutate(year = year + 2) %>% 
+  select (year, st_cd_fips, incumb)
 
 # merging gdp_q_final and turnout
 turnout <- left_join(turnout, gdp_q_final, by = "year")
@@ -94,6 +105,8 @@ turnout <- left_join(turnout, incumbency, by = c("year", "st_cd_fips")) %>%
   select(year, state, district_num, winner_party, RepVotes, DemVotes,
          DemVotesMajorPercent, st_cd_fips, cvap, turnout, 
          average_support, gdp_percent_difference, incumb)
+
+state_dists <- unique(turnout$st_cd_fips)
 ```
 
 ```{r 2022 dataframe}
@@ -105,7 +118,8 @@ turnout_2022 <- turnout %>%
   ungroup() %>% 
   select(year, state, district_num, st_cd_fips, historical_turnout_by_district) %>% 
   filter(year == 2012) %>% 
-  select(-year)
+  select(-year) %>% 
+  unique()
 
 # second, add nationwide variables
 # Generic ballot: 45.6% for Democrats from FiveThirtyEight
@@ -119,44 +133,229 @@ incumbency_2022 <- incumbency %>%
   filter(year == 2022)
 
 # Final 2022 data set to predict on
-turnout_2022 <- left_join(turnout_2022, incumbency_2022, by = "st_cd_fips") %>% 
+turnout22 <- left_join(turnout_2022, incumbency_2022, by = "st_cd_fips") %>% 
   select(state, district_num, st_cd_fips, historical_turnout_by_district,
          average_support, gdp_percent_difference, incumb) %>% 
   unique()
-
-write.csv(turnout_2022, "turnout_2022.csv")
 ``` 
 
 ```{r}
+# from Lucy
+turnout14 <- turnout %>%
+  filter(year == 2014) %>%
+  select(year, turnout, st_cd_fips) %>%
+  distinct() %>%
+  distinct(st_cd_fips, .keep_all = TRUE)
+turnout18 <- turnout %>%
+  filter(year == 2018) %>%
+  select(year, turnout, st_cd_fips) %>%
+  distinct() %>%
+  distinct(st_cd_fips, .keep_all = TRUE)
+turnout22_fixed <- left_join(turnout14, turnout18, by = "st_cd_fips") %>%
+  mutate(hist_avg = (turnout.x + turnout.y)/2) %>%
+  select(st_cd_fips, hist_avg)
+turnout22 <- left_join(turnout22, turnout22_fixed, by = "st_cd_fips") %>%
+  select(-historical_turnout_by_district)
+```
+
+```{r, warning = FALSE}
+# Instantiate lists
 models <- list()
 r2 <- c()
 preds <- c()
+preds_high <- c()
+preds_low <- c()
+coeff_support <- c()
+coeff_turnout <- c()
+coeff_gdp <- c()
+coeff_incumb <- c()
 
-state_dists <- unique(turnout$st_cd_fips)
-
+# Loop through each district, model and predict
 for (sd in state_dists){
   # Filter for dataframe with just district sd
   temp <- turnout %>%
     filter(st_cd_fips == sd)
   
   # Fit linear model for dem two-party vote-share
-  m <- lm(turnout ~ year, data = temp)
+  m <- lm(DemVotesMajorPercent ~ average_support + turnout + gdp_percent_difference + incumb, data = temp)
   
   # Add model to list of models
   models[[length(models)+1]] <- m
   
-  # Find r^2 and add to list of r^squareds
+  # Find r^2, coeffs, and add to list
   r2 <- c(r2, summary(m)$adj.r.squared)
+  coeff_support <- c(coeff_support, summary(m)$coefficients[2])
+  coeff_turnout <- c(coeff_turnout, summary(m)$coefficients[3])
+  coeff_gdp <- c(coeff_gdp, summary(m)$coefficients[4])
+  coeff_incumb <- c(coeff_incumb, summary(m)$coefficients[5])
   
-  new_data <- data.frame(year = 2022)
-  
+  # Make a 2022 prediction and append to list
+  new_data <- turnout22 %>%
+    filter(st_cd_fips == sd) %>%
+    rename(turnout = hist_avg)
   preds <- c(preds, predict(m, new_data))
+  preds_high <- c(preds_high, predict(m, new_data %>% mutate(turnout = turnout + 8)))
+  preds_low <- c(preds_low, predict(m, new_data %>% mutate(turnout = turnout - 8)))
 }
 
-# create a column with the new turnout
-turnout_2022$new_turnout=preds
-
+output <- tibble(state_dists, preds, preds_high, preds_low, r2, coeff_gdp, coeff_incumb, coeff_support, coeff_turnout)
 ```
 
+```{r Wyoming example}
+# Example linear regression model: Wyoming
+stargazer(m, type = "text")
+```
 
+```{r turnout prediction df, include = FALSE}
+preds_df <- tibble(state_dists, preds, preds_high, preds_low)
+```
+
+```{r}
+# low turnout 
+length(preds[preds_low <= 50]) # 215 Republican seats
+length(preds[preds_low > 50]) # 220 Democratic seats
+
+# average turnout
+length(preds[preds <= 50]) # 221 Republican seats
+length(preds[preds > 50]) # 214 Democratic seats
+
+# average turnout
+length(preds[preds_high <= 50]) # 224 Republican seats
+length(preds[preds_high > 50]) # 211 Democratic seats
+```
+
+```{r}
+# Actual 2018 House Election Results
+ggplot(turnout %>% filter(year == 2018), aes(x = DemVotesMajorPercent)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "Actual 2018 House Election Results",
+       subtitle = "House Districts",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  ylim(0,50)
+```
+
+```{r}
+# 2022 Election Predictions - Turnout Model
+# Low Turnout
+
+ggplot(output %>% mutate(preds_low = ifelse(preds_low > 100, 100, preds_low),
+                                        preds_low = ifelse(preds_low < 0, 0, preds_low)), 
+       aes(x = preds_low)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "Low Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+```{r}
+# 2022 Election Predictions - Turnout Model
+# Average Turnout
+
+ggplot(output %>% mutate(preds = ifelse(preds > 100, 100, preds),
+                                        preds = ifelse(preds < 0, 0, preds)), 
+       aes(x = preds)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "Average Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+```{r}
+# 2022 Election Predictions - Turnout Model
+# High Turnout
+
+ggplot(output %>% mutate(preds_high = ifelse(preds_high > 100, 100, preds_high),
+                                        preds_high = ifelse(preds_high < 0, 0, preds_high)), 
+       aes(x = preds_high)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "High Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+```{r}
+# R-Squared Values for Turnout Models in Each District
+
+ggplot(output, aes(x = r2)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "R-Squared Values for Turnout Models in Each District",
+       subtitle = "House Districts",
+       x = "R-Squared",
+       y = "Count")
+```
+
+```{rm include = FALSE}
+# coefficient models
+p1 <- ggplot(output, aes(x = coeff_gdp)) +
+  geom_histogram(bins = 30) + 
+  theme_few() +
+  labs(x = "GDP Coefficient",
+       y = "Count")
+p2 <- ggplot(output, aes(x = coeff_support)) +
+  geom_histogram(bins = 30) +
+  theme_few() +
+  labs(x = "Generic Ballot Coefficient",
+       y = "Count")
+p3 <- ggplot(output, aes(x = coeff_turnout)) +
+  geom_histogram(bins = 30) + 
+  theme_few() +
+  labs(x = "Turnout Coefficient",
+       y = "Count")
+grid.arrange(p1, p2, p3)
+```
+
+```{r}
+p1 <- ggplot(output, aes(x = coeff_gdp)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-2.5, 2.5) + 
+  geom_vline(xintercept = median(output$coeff_gdp, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "GDP Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p2 <- ggplot(output, aes(x = coeff_support)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-10, 10) +  
+  geom_vline(xintercept = median(output$coeff_support, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Generic Ballot Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p3 <- ggplot(output, aes(x = coeff_turnout)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-2.5, 2.5) + 
+  geom_vline(xintercept = median(output$coeff_turnout, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Turnout Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p4 <- ggplot(output, aes(x = coeff_incumb)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-20, 20) + 
+  geom_vline(xintercept = median(output$coeff_incumb, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Incumbency Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+grid.arrange(p1, p2, p3)
+```
 

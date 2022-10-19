@@ -9,8 +9,56 @@ tags: []
 
 
 
-<div id="section" class="section level2">
-<h2>2012 - 2022</h2>
-<pre><code>## `summarise()` has grouped output by &#39;year&#39;. You can override using the
-## `.groups` argument.</code></pre>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This week, I explore the effects of voter turnout on the Democratic vote share at the Congressional district level. Working together with Lucy Ding and Kaela Ellis, we created models for all 435 Congressional districts (for the first time this semester!). A more extensive look at all of our combined work can be found in this <a href="https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing">presentation</a>, which we presented in class on Tuesday, October 18 to GOV 1347.</p>
+<p>The models with voter turnout contain election data from 2012-2022. While, the models without voter turnout are more extensive with data all the way back to 1950.</p>
+<pre><code>## 
+## ==================================================
+##                            Dependent variable:    
+##                        ---------------------------
+##                           DemVotesMajorPercent    
+## --------------------------------------------------
+## average_support                   1.347           
+##                                  (1.397)          
+##                                                   
+## turnout                           0.089           
+##                                  (0.313)          
+##                                                   
+## gdp_percent_difference           -0.379           
+##                                  (0.323)          
+##                                                   
+## incumb                                            
+##                                                   
+##                                                   
+## Constant                         -36.698          
+##                                 (60.562)          
+##                                                   
+## --------------------------------------------------
+## Observations                        5             
+## R2                                0.614           
+## Adjusted R2                      -0.544           
+## Residual Std. Error          4.485 (df = 1)       
+## F Statistic                 0.530 (df = 3; 1)     
+## ==================================================
+## Note:                  *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## [1] 215</code></pre>
+<pre><code>## [1] 220</code></pre>
+<pre><code>## [1] 221</code></pre>
+<pre><code>## [1] 214</code></pre>
+<pre><code>## [1] 224</code></pre>
+<pre><code>## [1] 211</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 3 rows containing missing values (geom_bar).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 143 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 38 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 25 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 19 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
