@@ -1,0 +1,162 @@
+---
+title: 'Blog 6: The Ground Game - Campaigns'
+author: June Park
+date: '2022-10-15'
+slug: []
+categories: []
+tags: []
+---
+
+```{r libraries, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+
+cvap <- read_csv("cvap_district_2012-2020_clean.csv")
+electionresults <- read_csv("incumb_dist_1948-2020 (3).csv")
+genericballot <- read_csv("polls_df.csv")
+gdp_q <- read_csv("GDP_quarterly.csv")
+incumbency <- read_csv("incumb.csv")
+```
+
+## 2012 - 2022
+
+```{r adding turnout and generic ballot}
+# renaming geoid to st_cd_fips for left join
+cvap <- cvap %>% 
+  rename(st_cd_fips = geoid) 
+
+# create turnout dataframe by left joining election results and cvap
+turnout <-left_join(electionresults, cvap, by = c("year", "st_cd_fips")) %>% 
+  select(year, state.x, district_num, winner_party, 
+         RepVotes, DemVotes, DemVotesMajorPercent, st_cd_fips, cvap) %>% 
+  filter(year >= 2012) %>%  # filter for 2012-2020
+  rename(state = state.x) %>% 
+  mutate(turnout = (RepVotes + DemVotes) / cvap * 100) # turnout column
+
+# creating polls_d dataframe by cleaning genericballots
+genericballot$poll_date <- as.Date(genericballot$poll_date, format = "%m/%d/%Y")
+
+cleaned_polls <- genericballot %>% 
+  filter(year >= 2012,
+         days_until_election <= 52) %>% 
+         # the closest poll to election day for 1952 was 51.5
+  group_by(year, party) %>% 
+  summarise(average_support = mean(support))
+
+polls_d <- cleaned_polls %>% 
+  filter(party =="D")
+
+# adding generic ballot average to turnout
+turnout <- left_join(turnout, polls_d, by = "year") %>% 
+  select(year, state, district_num, winner_party, RepVotes, DemVotes,
+         DemVotesMajorPercent, st_cd_fips, cvap, turnout, average_support)
+```
+
+```{r adding economy and incumbency}
+# Create quarter change data and join all together with popular vote
+
+# Filter out data for Q6
+gdp_q6 <- gdp_q %>%
+  filter(year >= 2012, 
+         quarter_cycle == 6) %>% 
+  rename(gdp_q6 = GDPC1)
+
+# Filter out data for Q7
+gdp_q7 <- gdp_q %>%
+  filter(year >= 2012, 
+         quarter_cycle == 7) %>% 
+  rename(gdp_q7 = GDPC1)
+
+# creating gdp_q_final
+gdp_q_final <- left_join(gdp_q7, gdp_q6, by = "year") %>% 
+  mutate(gdp_q7_q6 = (gdp_q7 - gdp_q6) / gdp_q6 * 100) %>% # percent difference
+  rename(gdp_percent_difference = gdp_q7_q6) %>% 
+  select(year, gdp_percent_difference)
+
+# merging gdp_q_final and turnout
+turnout <- left_join(turnout, gdp_q_final, by = "year")
+
+# merging incumbency and turnout
+turnout <- left_join(turnout, incumbency, by = c("year", "st_cd_fips")) %>% 
+  select(year, state, district_num, winner_party, RepVotes, DemVotes,
+         DemVotesMajorPercent, st_cd_fips, cvap, turnout, 
+         average_support, gdp_percent_difference, incumb)
+```
+
+```{r 2022 dataframe}
+# creating 2022 dataframe
+# first, add the average voter turnout in district from 2012-2020
+turnout_2022 <- turnout %>% 
+  group_by(st_cd_fips) %>% 
+  mutate(historical_turnout_by_district = mean(turnout)) %>% 
+  ungroup() %>% 
+  select(year, state, district_num, st_cd_fips, historical_turnout_by_district) %>% 
+  filter(year == 2012) %>% 
+  select(-year)
+
+# second, add nationwide variables
+# Generic ballot: 45.6% for Democrats from FiveThirtyEight
+# GDP: -0.6 (taken from Q2 change)
+turnout_2022 <- turnout_2022 %>% 
+  mutate(average_support = 45.6,
+         gdp_percent_difference = -0.6)
+
+# Incumbency
+incumbency_2022 <- incumbency %>% 
+  filter(year == 2022)
+
+# Final 2022 data set to predict on
+turnout_2022 <- left_join(turnout_2022, incumbency_2022, by = "st_cd_fips") %>% 
+  select(state, district_num, st_cd_fips, historical_turnout_by_district,
+         average_support, gdp_percent_difference, incumb) %>% 
+  unique()
+
+write.csv(turnout_2022, "turnout_2022.csv")
+``` 
+
+```{r}
+models <- list()
+r2 <- c()
+preds <- c()
+
+state_dists <- unique(turnout$st_cd_fips)
+
+for (sd in state_dists){
+  # Filter for dataframe with just district sd
+  temp <- turnout %>%
+    filter(st_cd_fips == sd)
+  
+  # Fit linear model for dem two-party vote-share
+  m <- lm(turnout ~ year, data = temp)
+  
+  # Add model to list of models
+  models[[length(models)+1]] <- m
+  
+  # Find r^2 and add to list of r^squareds
+  r2 <- c(r2, summary(m)$adj.r.squared)
+  
+  new_data <- data.frame(year = 2022)
+  
+  preds <- c(preds, predict(m, new_data))
+}
+
+# create a column with the new turnout
+turnout_2022$new_turnout=preds
+
+```
+
+
+
