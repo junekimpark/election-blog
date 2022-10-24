@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Blog 6: The Ground Game - Campaigns &middot; June Park&#39;s Election Analytics Blog</title>
+
+		
+		<link rel="stylesheet" href="/election-blog/css/style.css">
+		<link rel="stylesheet" href="/election-blog/css/fonts.css">
+		
+		<link rel="icon" href="/election-blog/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/election-blog/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/election-blog/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/election-blog/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="June Park&#39;s Election Analytics Blog" />
+
+		<script src="/election-blog/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">June Park&#39;s Election Analytics Blog</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        June Park
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-10-19 00:00:00 &#43;0000 UTC">October 19, 2022</time>
+</div>
+
+		<h1 class="post-title">Blog 6: The Ground Game - Campaigns</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This week, I explore the effects of voter turnout on the Democratic vote share and seat share at the Congressional district level. Working together with Lucy Ding and Kaela Ellis, we created models for all 435 Congressional districts (for the first time this semester!). A more extensive look at all of our combined work can be found in this <a href="https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing">presentation</a>, which we presented in class on Tuesday, October 18 to GOV 1347.</p>
+<p>The models with voter turnout contain election data from 2012-2022. While, the models without voter turnout are more extensive with data all the way back to 1950. This blog will focus on the models with voter turnout, so please refer to <a href="https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing">our extensive presentation</a> for this information.</p>
+</div>
+<div id="turnout-models" class="section level2">
+<h2>Turnout Models</h2>
+<div id="how-did-we-build-the-turnout-models" class="section level3">
+<h3>How did we build the turnout models?</h3>
+<p>With all of this in mind, this week, we use <strong>voter turnout</strong> as a proxy to exploring the effectiveness of campaigns.</p>
+<p>We were able to build a model for all 435 districts! However, we were limited to only 10 years of data (2012-2022) due to the limitations with the Citizen Voting Age Population (CVAP) data that we were given. The independent variables that we used in our models were as follows:
+1. <strong>District level voter turnout:</strong> (Rep Vote + Dem Vote) / CVAP
+2. <strong>National Generic Ballot:</strong> The average generic ballot score for Democrats (filtered for 52 days before the election)
+3. <strong>Q7-&gt;Q6 Percent Difference in GDP:</strong> The percent difference in GDP from Q6 to Q7
+4. <strong>Incumbency:</strong> Whether or not the Democratic party is the incumbent party</p>
+</div>
+<div id="example-model-of-a-district-wyoming" class="section level3">
+<h3>Example model of a district: Wyoming</h3>
+<pre><code>## 
+## ==================================================
+##                            Dependent variable:    
+##                        ---------------------------
+##                           DemVotesMajorPercent    
+## --------------------------------------------------
+## average_support                   1.347           
+##                                  (1.397)          
+##                                                   
+## turnout                           0.089           
+##                                  (0.313)          
+##                                                   
+## gdp_percent_difference           -0.379           
+##                                  (0.323)          
+##                                                   
+## incumb                                            
+##                                                   
+##                                                   
+## Constant                         -36.698          
+##                                 (60.562)          
+##                                                   
+## --------------------------------------------------
+## Observations                        5             
+## R2                                0.614           
+## Adjusted R2                      -0.544           
+## Residual Std. Error          4.485 (df = 1)       
+## F Statistic                 0.530 (df = 3; 1)     
+## ==================================================
+## Note:                  *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>Here is an example linear regression model of one district (WY-AL). Using a for loop, we then ran the linear regression model 435 times for all 435 districts.</p>
+<p>This particular model is not so good. None of the variables are significant. The adjusted r-squared is negative. Since incumbency was the same over the 10 year period, it was not regressed on. To see an improved version of this model, please see our <a href="https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing">model WITHOUT voter turnout</a>.</p>
+</div>
+<div id="evaluation-of-the-435-models" class="section level3">
+<h3>Evaluation of the 435 models</h3>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/index_files/figure-html/r-squared-1.png" width="672" /></p>
+<p>Here is a distribution of the r-squared values. It is a bit concerning that we have negative values and then a high concentration of 1s.</p>
+</div>
+<div id="but-we-may-be-able-to-still-learn-something-from-it" class="section level3">
+<h3>But we may be able to still learn something from it!</h3>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/index_files/figure-html/coefficient%20plots-1.png" width="672" /></p>
+<p>The left graph is a distribution of all the GDP coefficients. Median GDP coefficient is <strong>negative</strong>. This indicates that as GDP increases, Democratic vote share decreases. We saw this trend also in our models without voter turnout and so it is very interesting. It is a bit counterintuitive because one would expect a better economy should benefit Democrats. However, this could indicate that when using the economy we should regress on the president’s party.</p>
+<p>The middle graph is a distribution of all the generic ballot coefficients. Median generic ballot coefficient is <strong>positive</strong>. This as average Democratic support, Democratic vote share increases. This trend was also seen in our models without voter turnout and it intuitively makes sense.</p>
+<p>The right graph is a distribution of all the generic ballot coefficients. Median turnout coefficient was essentially zero. This indicates that perhaps voter turnout (and as a proxy campaigns) are not that effective at predicting Democratic two-party vote share.</p>
+</div>
+</div>
+<div id="predictions-for-2022" class="section level2">
+<h2>Predictions for 2022</h2>
+<div id="how-did-we-make-predictions-for-2022" class="section level3">
+<h3>How did we make predictions for 2022?</h3>
+<p><strong>Voter turnout:</strong> We imputed 2022 turnout data by averaging 2014 and 2018 data (midterm elections). We then calculated a low, middle, and high turnout universe with +- 8 points from the average voter turnouts found above</p>
+<p><strong>Generic ballot:</strong> The average generic ballot for Democrats from FiveThirtyEight on October 16, 2022: 45.6%</p>
+<p><strong>GDP:</strong> Q2-Q1 change: -0.6</p>
+<p><strong>Incumbency:</strong> from 2020 election results</p>
+</div>
+<div id="district-level-predictions-adjusted-by-turnout" class="section level3">
+<h3>District-Level Predictions Adjusted By Turnout</h3>
+<p>We created three predictions based on low turnout, average turnout, and high turnout. We determined seat predictions based on if the Democratic two-party vote share was below 50% then that was a Republican seat and if it was above 50% then that was a Democratic seat.</p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/index_files/figure-html/low%20turnout-1.png" width="672" /></p>
+<p>In the low turnout scenario (-8 percentage points from average turnout in the district), we predict that Republicans will win 215 seats, while the Democrats will win 220 seats. <strong>The low turnout scenario predicts a Democratic win in the House.</strong></p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/index_files/figure-html/average%20turnout-1.png" width="672" /></p>
+<p>In the average turnout scenario, we predict that Republicans will win 221 seats, while the Democrats will win 214 seats. <strong>The average turnout scenario predicts a Republican win in the House.</strong></p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/index_files/figure-html/high%20turnout-1.png" width="672" /></p>
+<p>In the high turnout scenario (+8 percentage points from average turnout in the district), we predict that Republicans will win 224 seats, while the Democrats will win 211 Seats. <strong>The high turnout scenario predicts a Republican win in the House.</strong></p>
+<p>These predictions go against conventional thought that Democrats perhaps benefit from higher turnout because it is only in the low turnout scenario that Democrats win. However, recent literature has also debunked this notion.</p>
+</div>
+</div>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
+<p>One of the main limits of this exploration was that with our given data set, voter turnout as a variable was very limiting because we only had data from 2012-2020. In addition, we had to create predictions for 2022 voter turnout at the district level in order to create predictions for 2022 Democratic two-party vote share. There could have been some methodological problems with our predictions for voter turnout.</p>
+<p>In addition, the economic variable of GDP perhaps is a better explainer for incumbent party’s or president’s party vote share, instead of Democratic vote share. Going forward, we may want to consider the interaction of GDP with the president’s party for example.</p>
+<p>Finally, we wonder if voter turnout is even the best proxy for evaluating campaigns. Perhaps, the number of local campaign offices could be a better predictor. However, voter turnout, despite its limitations, could be the most accessible data set.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Despite limitations, I am proud that we were able to run models for all 435 districts for the first time.</p>
+<p>If you are interested in the models without voter turnout, which had more predictive power and had an interesting result, please refer to the presentation slides. The only difference is that these models removed voter turnout as a variable and used data from 1950-2022. The trends of the distribution of the coefficients of the variables are the same as the models with voter turnout. However, interestingly, without voter turnout, we predict that the Republicans will win 215 seats, while the Democrats will win 220 seats. Thus, the models without voter turnout predict a Democratic victory in the House, opposite to our average and high voter turnout models.</p>
+<p>Data:
+Citizen Voting Age Population (given by class)
+GDP quarterly data (given by class)
+House Vote to determine incumbency (given by class)
+House Generic Ballot Polls 2022 (FiveThirtyEight)</p>
+</div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/election-blog/post/2022-10-11-blog-5-the-air-war-advertisements/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-10-24 17:31:13.151094 -0400 EDT m=&#43;0.358330482">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

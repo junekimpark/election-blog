@@ -1,0 +1,390 @@
+---
+title: 'Blog 6: The Ground Game - Campaigns'
+author: June Park
+date: '2022-10-19'
+slug: []
+categories: []
+tags: []
+---
+
+```{r libraries, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+library(ggthemes)
+library(gridExtra)
+```
+
+```{r data, include = FALSE}
+cvap <- read_csv("cvap_district_2012-2020_clean.csv")
+electionresults <- read_csv("incumb_dist_1948-2020 (3).csv")
+genericballot <- read_csv("polls_df.csv")
+gdp_q <- read_csv("GDP_quarterly.csv")
+incumbency <- read_csv("incumb.csv")
+```
+
+## Introduction
+This week, I explore the effects of voter turnout on the Democratic vote share and seat share at the Congressional district level. Working together with Lucy Ding and Kaela Ellis, we created models for all 435 Congressional districts (for the first time this semester!). A more extensive look at all of our combined work can be found in this [presentation](https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing), which we presented in class on Tuesday, October 18 to GOV 1347. 
+
+The models with voter turnout contain election data from 2012-2022. While, the models without voter turnout are more extensive with data all the way back to 1950. This blog will focus on the models with voter turnout, so please refer to [our extensive presentation](https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing) for this information.
+
+```{r adding turnout and generic ballot, include = FALSE}
+# renaming geoid to st_cd_fips for left join
+cvap <- cvap %>% 
+  rename(st_cd_fips = geoid) 
+
+# create turnout dataframe by left joining election results and cvap
+turnout <-left_join(electionresults, cvap, by = c("year", "st_cd_fips")) %>% 
+  select(year, state.x, district_num, winner_party, 
+         RepVotes, DemVotes, DemVotesMajorPercent, st_cd_fips, cvap) %>% 
+  filter(year >= 2012) %>%  # filter for 2012-2020
+  rename(state = state.x) %>% 
+  mutate(turnout = (RepVotes + DemVotes) / cvap * 100) # turnout column
+
+# creating polls_d dataframe by cleaning genericballots
+genericballot$poll_date <- as.Date(genericballot$poll_date, format = "%m/%d/%Y")
+
+cleaned_polls <- genericballot %>% 
+  filter(year >= 2012,
+         days_until_election <= 52) %>% 
+         # the closest poll to election day for 1952 was 51.5
+  group_by(year, party) %>% 
+  summarise(average_support = mean(support))
+
+polls_d <- cleaned_polls %>% 
+  filter(party =="D")
+
+# adding generic ballot average to turnout
+turnout <- left_join(turnout, polls_d, by = "year") %>% 
+  select(year, state, district_num, winner_party, RepVotes, DemVotes,
+         DemVotesMajorPercent, st_cd_fips, cvap, turnout, average_support)
+```
+
+```{r adding economy and incumbency, include = FALSE}
+# Filter out data for Q6
+gdp_q6 <- gdp_q %>%
+  filter(year >= 2012, 
+         quarter_cycle == 6) %>% 
+  rename(gdp_q6 = GDPC1)
+
+# Filter out data for Q7
+gdp_q7 <- gdp_q %>%
+  filter(year >= 2012, 
+         quarter_cycle == 7) %>% 
+  rename(gdp_q7 = GDPC1)
+
+# Creating gdp_q_final
+gdp_q_final <- left_join(gdp_q7, gdp_q6, by = "year") %>% 
+  mutate(gdp_q7_q6 = (gdp_q7 - gdp_q6) / gdp_q6 * 100) %>% # percent difference
+  rename(gdp_percent_difference = gdp_q7_q6) %>% 
+  select(year, gdp_percent_difference)
+
+# Creating incumbency
+incumbency <- electionresults %>%  
+  mutate(incumb = ifelse(winner_candidate == "DemCandidate",1,0)) %>% 
+  mutate(year = year + 2) %>% 
+  select (year, st_cd_fips, incumb)
+
+# merging gdp_q_final and turnout
+turnout <- left_join(turnout, gdp_q_final, by = "year")
+
+# merging incumbency and turnout
+turnout <- left_join(turnout, incumbency, by = c("year", "st_cd_fips")) %>% 
+  select(year, state, district_num, winner_party, RepVotes, DemVotes,
+         DemVotesMajorPercent, st_cd_fips, cvap, turnout, 
+         average_support, gdp_percent_difference, incumb)
+
+state_dists <- unique(turnout$st_cd_fips)
+```
+
+```{r 2022 dataframe, include = FALSE}
+# creating 2022 dataframe
+# first, add the average voter turnout in district from 2012-2020
+turnout_2022 <- turnout %>% 
+  group_by(st_cd_fips) %>% 
+  mutate(historical_turnout_by_district = mean(turnout)) %>% 
+  ungroup() %>% 
+  select(year, state, district_num, st_cd_fips, historical_turnout_by_district) %>% 
+  filter(year == 2012) %>% 
+  select(-year) %>% 
+  unique()
+
+# second, add nationwide variables
+# Generic ballot: 45.6% for Democrats from FiveThirtyEight
+# GDP: -0.6 (taken from Q2 change)
+turnout_2022 <- turnout_2022 %>% 
+  mutate(average_support = 45.6,
+         gdp_percent_difference = -0.6)
+
+# Incumbency
+incumbency_2022 <- incumbency %>% 
+  filter(year == 2022)
+
+# Final 2022 data set to predict on
+turnout22 <- left_join(turnout_2022, incumbency_2022, by = "st_cd_fips") %>% 
+  select(state, district_num, st_cd_fips, historical_turnout_by_district,
+         average_support, gdp_percent_difference, incumb) %>% 
+  unique()
+``` 
+
+```{r creating data, include = FALSE}
+turnout14 <- turnout %>%
+  filter(year == 2014) %>%
+  select(year, turnout, st_cd_fips) %>%
+  distinct() %>%
+  distinct(st_cd_fips, .keep_all = TRUE)
+turnout18 <- turnout %>%
+  filter(year == 2018) %>%
+  select(year, turnout, st_cd_fips) %>%
+  distinct() %>%
+  distinct(st_cd_fips, .keep_all = TRUE)
+turnout22_fixed <- left_join(turnout14, turnout18, by = "st_cd_fips") %>%
+  mutate(hist_avg = (turnout.x + turnout.y)/2) %>%
+  select(st_cd_fips, hist_avg)
+turnout22 <- left_join(turnout22, turnout22_fixed, by = "st_cd_fips") %>%
+  select(-historical_turnout_by_district)
+```
+
+## Turnout Models
+### How did we build the turnout models?
+With all of this in mind, this week, we use **voter turnout** as a proxy to exploring the effectiveness of campaigns.
+
+We were able to build a model for all 435 districts! However, we were limited to only 10 years of data (2012-2022) due to the limitations with the Citizen Voting Age Population (CVAP) data that we were given. The independent variables that we used in our models were as follows:
+1. **District level voter turnout:** (Rep Vote + Dem Vote) / CVAP 
+2. **National Generic Ballot:** The average generic ballot score for Democrats (filtered for 52 days before the election)
+3. **Q7->Q6 Percent Difference in GDP:** The percent difference in GDP from Q6 to Q7
+4. **Incumbency:** Whether or not the Democratic party is the incumbent party
+
+```{r models, warning = FALSE}
+# Instantiate lists
+models <- list()
+r2 <- c()
+preds <- c()
+preds_high <- c()
+preds_low <- c()
+coeff_support <- c()
+coeff_turnout <- c()
+coeff_gdp <- c()
+coeff_incumb <- c()
+
+# Loop through each district, model and predict
+for (sd in state_dists){
+  # Filter for dataframe with just district sd
+  temp <- turnout %>%
+    filter(st_cd_fips == sd)
+  
+  # Fit linear model for dem two-party vote-share
+  m <- lm(DemVotesMajorPercent ~ average_support + turnout + gdp_percent_difference + incumb, data = temp)
+  
+  # Add model to list of models
+  models[[length(models)+1]] <- m
+  
+  # Find r^2, coeffs, and add to list
+  r2 <- c(r2, summary(m)$adj.r.squared)
+  coeff_support <- c(coeff_support, summary(m)$coefficients[2])
+  coeff_turnout <- c(coeff_turnout, summary(m)$coefficients[3])
+  coeff_gdp <- c(coeff_gdp, summary(m)$coefficients[4])
+  coeff_incumb <- c(coeff_incumb, summary(m)$coefficients[5])
+  
+  # Make a 2022 prediction and append to list
+  new_data <- turnout22 %>%
+    filter(st_cd_fips == sd) %>%
+    rename(turnout = hist_avg)
+  preds <- c(preds, predict(m, new_data))
+  preds_high <- c(preds_high, predict(m, new_data %>% mutate(turnout = turnout + 8)))
+  preds_low <- c(preds_low, predict(m, new_data %>% mutate(turnout = turnout - 8)))
+}
+
+output <- tibble(state_dists, preds, preds_high, preds_low, r2, coeff_gdp, coeff_incumb, coeff_support, coeff_turnout)
+```
+
+### Example model of a district: Wyoming
+```{r Wyoming example}
+# Example linear regression model: Wyoming
+stargazer(m, type = "text")
+```
+
+Here is an example linear regression model of one district (WY-AL). Using a for loop, we then ran the linear regression model 435 times for all 435 districts.
+
+This particular model is not so good. None of the variables are significant. The adjusted r-squared is negative. Since incumbency was the same over the 10 year period, it was not regressed on. To see an improved version of this model, please see our [model WITHOUT voter turnout](https://docs.google.com/presentation/d/1BylNhNNvf7J2S74J9gEgFVtR0okc9q5-CjXD8OkvbeY/edit?usp=sharing). 
+
+### Evaluation of the 435 models
+```{r r-squared, warning = FALSE}
+# R-Squared Values for Turnout Models in Each District
+ggplot(output, aes(x = r2)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "R-Squared Values for Turnout Models in Each District",
+       subtitle = "House Districts",
+       x = "R-Squared",
+       y = "Count")
+```
+
+Here is a distribution of the r-squared values. It is a bit concerning that we have negative values and then a high concentration of 1s. 
+
+### But we may be able to still learn something from it!
+```{r coefficient plots, warning = FALSE}
+p1 <- ggplot(output, aes(x = coeff_gdp)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-2.5, 2.5) + 
+  geom_vline(xintercept = median(output$coeff_gdp, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "GDP Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p2 <- ggplot(output, aes(x = coeff_support)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-10, 10) +  
+  geom_vline(xintercept = median(output$coeff_support, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Generic Ballot Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p3 <- ggplot(output, aes(x = coeff_turnout)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-2.5, 2.5) + 
+  geom_vline(xintercept = median(output$coeff_turnout, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Turnout Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+p4 <- ggplot(output, aes(x = coeff_incumb)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-20, 20) + 
+  geom_vline(xintercept = median(output$coeff_incumb, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Incumbency Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+
+grid.arrange(p1, p2, p3)
+```
+
+The left graph is a distribution of all the GDP coefficients. Median GDP coefficient is **negative**. This indicates that as GDP increases, Democratic vote share decreases. We saw this trend also in our models without voter turnout and so it is very interesting. It is a bit counterintuitive because one would expect a better economy should benefit Democrats. However, this could indicate that when using the economy we should regress on the president’s party. 
+
+The middle graph is a distribution of all the generic ballot coefficients. Median generic ballot coefficient is **positive**. This as average Democratic support, Democratic vote share increases. This trend was also seen in our models without voter turnout and it intuitively makes sense. 
+
+The right graph is a distribution of all the generic ballot coefficients. Median turnout coefficient was essentially zero. This indicates that perhaps voter turnout (and as a proxy campaigns) are not that effective at predicting Democratic two-party vote share.
+
+## Predictions for 2022
+### How did we make predictions for 2022?
+**Voter turnout:** We imputed 2022 turnout data by averaging 2014 and 2018 data (midterm elections). We then calculated a low, middle, and high turnout universe with +- 8 points from the average voter turnouts found above
+
+**Generic ballot:** The average generic ballot for Democrats from FiveThirtyEight on October 16, 2022: 45.6%
+
+**GDP:** Q2-Q1 change: -0.6
+
+**Incumbency:** from 2020 election results
+
+```{r turnout prediction df, include = FALSE}
+preds_df <- tibble(state_dists, preds, preds_high, preds_low)
+```
+
+### District-Level Predictions Adjusted By Turnout
+We created three predictions based on low turnout, average turnout, and high turnout. We determined seat predictions based on if the Democratic two-party vote share was below 50% then that was a Republican seat and if it was above 50% then that was a Democratic seat. 
+
+```{r turnout model predictions, include = FALSE}
+# low turnout 
+length(preds[preds_low <= 50]) # 215 Republican seats
+length(preds[preds_low > 50]) # 220 Democratic seats
+
+# average turnout
+length(preds[preds <= 50]) # 221 Republican seats
+length(preds[preds > 50]) # 214 Democratic seats
+
+# average turnout
+length(preds[preds_high <= 50]) # 224 Republican seats
+length(preds[preds_high > 50]) # 211 Democratic seats
+```
+
+```{r low turnout, warning = FALSE}
+# 2022 Election Predictions - Turnout Model
+# Low Turnout
+
+ggplot(output %>% mutate(preds_low = ifelse(preds_low > 100, 100, preds_low),
+                                        preds_low = ifelse(preds_low < 0, 0, preds_low)), 
+       aes(x = preds_low)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "Low Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+In the low turnout scenario (-8 percentage points from average turnout in the district), we predict that Republicans will win 215 seats, while the Democrats will win 220 seats. **The low turnout scenario predicts a Democratic win in the House.**
+
+```{r average turnout, warning = FALSE}
+# 2022 Election Predictions - Turnout Model
+# Average Turnout
+
+ggplot(output %>% mutate(preds = ifelse(preds > 100, 100, preds),
+                                        preds = ifelse(preds < 0, 0, preds)), 
+       aes(x = preds)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "Average Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+In the average turnout scenario, we predict that Republicans will win 221 seats, while the Democrats will win 214 seats. **The average turnout scenario predicts a Republican win in the House.**
+
+```{r high turnout, warning = FALSE}
+# 2022 Election Predictions - Turnout Model
+# High Turnout
+
+ggplot(output %>% mutate(preds_high = ifelse(preds_high > 100, 100, preds_high),
+                                        preds_high = ifelse(preds_high < 0, 0, preds_high)), 
+       aes(x = preds_high)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "High Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
+
+In the high turnout scenario (+8 percentage points from average turnout in the district), we predict that Republicans will win 224 seats, while the Democrats will win 211 Seats. **The high turnout scenario predicts a Republican win in the House.**
+
+These predictions go against conventional thought that Democrats perhaps benefit from higher turnout because it is only in the low turnout scenario that Democrats win. However, recent literature has also debunked this notion.
+
+## Limitations
+One of the main limits of this exploration was that with our given data set, voter turnout as a variable was very limiting because we only had data from 2012-2020. In addition, we had to create predictions for 2022 voter turnout at the district level in order to create predictions for 2022 Democratic two-party vote share. There could have been some methodological problems with our predictions for voter turnout. 
+
+In addition, the economic variable of GDP perhaps is a better explainer for incumbent party’s or president’s party vote share, instead of Democratic vote share. Going forward, we may want to consider the interaction of GDP with the president's party for example.
+
+Finally, we wonder if voter turnout is even the best proxy for evaluating campaigns. Perhaps, the number of local campaign offices could be a better predictor. However, voter turnout, despite its limitations, could be the most accessible data set. 
+
+## Conclusion
+Despite limitations, I am proud that we were able to run models for all 435 districts for the first time. 
+
+If you are interested in the models without voter turnout, which had more predictive power and had an interesting result, please refer to the presentation slides. The only difference is that these models removed voter turnout as a variable and used data from 1950-2022. The trends of the distribution of the coefficients of the variables are the same as the models with voter turnout. However, interestingly, without voter turnout, we predict that the Republicans will win 215 seats, while the Democrats will win 220 seats. Thus, the models without voter turnout predict a Democratic victory in the House, opposite to our average and high voter turnout models.
+
+Data:
+Citizen Voting Age Population (given by class)
+GDP quarterly data (given by class)
+House Vote to determine incumbency  (given by class)
+House Generic Ballot Polls 2022 (FiveThirtyEight)
