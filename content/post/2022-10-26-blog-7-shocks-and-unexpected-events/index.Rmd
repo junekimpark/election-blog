@@ -1,0 +1,109 @@
+---
+title: 'Blog 7: Shocks and Unexpected Events'
+author: June Park
+date: '2022-10-26'
+slug: []
+categories: []
+tags: []
+---
+
+```{r libraries, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+library(ggthemes)
+library(gridExtra)
+library(plm) # pooled linear regression model
+```
+
+## Introduction
+This week, I learned about shocks and unexpected events and whether they have an effect on election outcomes. However, my main model for the week did not include shocks and unexpected events and instead focused on incorporating a pooled model. In my model, my dependent variable was Democratic two-party vote share and my independent variables were the average generic ballot score for Democrats, gdp percent difference between Q7 and Q8, incumbency, and the interaction between gdp and incumbency. I was once again able to run the model at the district-level.
+
+## What are shocks and unexpected events?
+From last week’s lecture, a **shock** is defined as “a *non-systematic* event that affects the outcome of an election.” They are often unexpected. An example of a shock in 2022 could be the Dobbs v. Jackson decision where the Supreme Court overruled Roe v. Wade to argue that Constitution of the United States does NOT confer a right to abortion. This could become a shock if, for example, it turns out a lot of angry women and allies out to vote for pro-abortion candidates, than predicted before the Dobbs v. Jackson decision. 
+
+Shocks can also be apolitical. For example, Achen and Bartel (2017) examined beach towns in New Jersey and found that beach towns affected by shark attacks voted *significantly less* for the incumbent than non-beach towns. This finding contributes to an old-held belief that some voters will not vote because of reasons like the weather that day. 
+
+### Are voters irrational and incompetent?
+Thus, this raises the question whether mean voters are irrational and incompetent. In section, I learned that there are cases when voters rationally consider the impact of shocks in their vote. Voters consider what the government could have done better, like better response, relief, and/or preparation. At the same time, there are cases when voters irrationally consider the impact of shocks in their vote. For example, researchers found the effect of partisan bias. When asked which official was to be blamed for September 11, the answer depended on partisanship (Malhotra and Kuo 2008; Healy, Kuo, Malhotra 2014).  
+
+When considering shocks systematically, this requires stating a theory and defining the effect:
+The strength (size)
+The scope (e.g., where: local vs national, who: engaged vs non-engaged)
+Persistence
+
+With these three factors in mind, I decided to NOT use shocks in my model. If I was to consider using a shock for 2022 for all 435 districts, I would use the Dobbs v. Jackson decision, but I am concerned about the persistence of its effect as a shock. 
+
+Thus, I now turn to the main exploration of this week, which was a pooled model.
+
+```{r data, include = FALSE}
+district_model_data <- read.csv("district_model_data.csv")
+district_model_2022 <- read.csv("turnout_2022.csv")
+
+# to create the 435 districts for the model to run on
+state_dists <- unique(district_model_2022$st_cd_fips)
+```
+
+## Pooled Model
+```{r, include = FALSE}
+models <- list()
+r2 <- c()
+preds <- c()
+coeff_support <- c()
+coeff_gdp <- c()
+coeff_incumb <- c()
+coeff_interaction <- c()
+
+for (sd in state_dists){
+  # Filter for dataframe with just district sd
+  temp <- district_model_data %>%
+    filter(year != 2022) %>%
+    filter(st_cd_fips == sd)
+  
+  # Fit linear model for dem two-party vote-share
+  m <- lm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incumb + gdp_percent_difference*incumb, data = temp)
+  
+  # Add model to list of models
+  models[[length(models)+1]] <- m
+  
+  # Find r^2, coeffs, and add to list
+  r2 <- c(r2, summary(m)$adj.r.squared)
+  coeff_support <- c(coeff_support, summary(m)$coefficients[2])
+  coeff_gdp <- c(coeff_gdp, summary(m)$coefficients[3])
+  coeff_incumb <- c(coeff_incumb, summary(m)$coefficients[4])
+  coeff_interaction <- c(coeff_interaction, summary(m)$coefficients[5])
+  
+  # Make a 2022 prediction and append to list
+  new_data <- district_model_2022 %>%
+    filter(st_cd_fips == sd)
+  preds <- c(preds, predict(m, new_data))
+}
+```
+
+```{r, include = FALSE}
+# lol pooled is just all districts linear regression model
+all <- lm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incumb + gdp_percent_difference*incumb, data = district_model_data)
+
+# pooled linear regression model
+pooled <- plm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incumb + gdp_percent_difference*incumb, data = district_model_data, model = "pooling")
+
+plmtest(pooled, type = c("bp"))
+```
+
+```{r, warning = FALSE}
+stargazer(m, pooled, type = "text")
+```
+
+

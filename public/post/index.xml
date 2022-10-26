@@ -6,7 +6,16 @@
     <description>Recent content in Posts on June Park&#39;s Election Analytics Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog 7: Shocks and Unexpected Events</title>
+      <link>https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/</link>
+      <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/</guid>
+      <description>Introduction This week, I learned about shocks and unexpected events and whether they have an effect on election outcomes. However, my main model for the week did not include shocks and unexpected events and instead focused on incorporating a pooled model. In my model, my dependent variable was Democratic two-party vote share and my independent variables were the average generic ballot score for Democrats, gdp percent difference between Q7 and Q8, incumbency, and the interaction between gdp and incumbency.</description>
+    </item>
+    
     <item>
       <title>Blog 6: The Ground Game - Campaigns</title>
       <link>https://junekimpark.github.io/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/</link>
