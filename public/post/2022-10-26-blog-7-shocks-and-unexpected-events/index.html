@@ -86,37 +86,48 @@ Persistence</p>
 <div id="pooled-model" class="section level2">
 <h2>Pooled Model</h2>
 <pre><code>## 
-## ================================================================================
-##                                              Dependent variable:                
-##                               --------------------------------------------------
-##                                              DemVotesMajorPercent               
-##                                        OLS                     panel            
-##                                                                linear           
-##                                        (1)                      (2)             
-## --------------------------------------------------------------------------------
-## average_support                     0.826***                  0.515***          
-##                                      (0.281)                  (0.029)           
-##                                                                                 
-## gdp_percent_difference               -0.540                   -0.104**          
-##                                      (0.324)                  (0.052)           
-##                                                                                 
-## incumb                               9.543**                 35.945***          
-##                                      (4.339)                  (0.283)           
-##                                                                                 
-## gdp_percent_difference:incumb        -1.179                    -0.108           
-##                                      (4.494)                  (0.070)           
-##                                                                                 
-## Constant                             -0.806                  10.584***          
-##                                     (13.455)                  (1.427)           
-##                                                                                 
-## --------------------------------------------------------------------------------
-## Observations                           36                      15,498           
-## R2                                    0.438                    0.544            
-## Adjusted R2                           0.366                    0.544            
-## Residual Std. Error              7.183 (df = 31)                                
-## F Statistic                   6.043*** (df = 4; 31) 4,627.711*** (df = 4; 15493)
-## ================================================================================
-## Note:                                                *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+## ========================================================================================
+##                                                  Dependent variable:                    
+##                               ----------------------------------------------------------
+##                                                  DemVotesMajorPercent                   
+##                                           (1)                           (2)             
+## ----------------------------------------------------------------------------------------
+## average_support                         0.515***                                        
+##                                         (0.029)                                         
+##                                                                                         
+## gdp_percent_difference                  -0.104**                                        
+##                                         (0.052)                                         
+##                                                                                         
+## incumb                                 35.945***                     35.955***          
+##                                         (0.283)                       (0.269)           
+##                                                                                         
+## gdp_percent_difference:incumb            -0.108                                         
+##                                         (0.070)                                         
+##                                                                                         
+## Constant                               10.584***                     35.235***          
+##                                         (1.427)                       (0.199)           
+##                                                                                         
+## ----------------------------------------------------------------------------------------
+## Observations                             15,498                       15,498            
+## R2                                       0.544                         0.535            
+## Adjusted R2                              0.544                         0.535            
+## F Statistic                   4,627.711*** (df = 4; 15493) 17,829.100*** (df = 1; 15496)
+## ========================================================================================
+## Note:                                                        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## Warning: Removed 4 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 3 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/index_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/index_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre><code>## Warning: Removed 400 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_vline).</code></pre>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/index_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+<pre><code>## [1] 212</code></pre>
+<pre><code>## [1] 223</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 
 
@@ -125,6 +136,7 @@ Persistence</p>
 
 	<div class="pagination">
 		<a href="/election-blog/post/2022-10-19-blog-6-the-ground-game-campaigns/" class="left arrow">&#8592;</a>
+		<a href="/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/" class="right arrow">&#8594;</a>
 
 		<a href="#" class="top">Top</a>
 	</div>
@@ -134,7 +146,7 @@ Persistence</p>
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-10-26 11:56:43.908539 -0400 EDT m=&#43;0.281079902">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-11-07 06:59:53.194116 -0500 EST m=&#43;0.278122340">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

@@ -1,0 +1,72 @@
+---
+title: 'Prediction for the 2022 House Midterms '
+author: June Park
+date: '2022-11-04'
+slug: []
+categories: []
+tags: []
+---
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this week’s blog, I present my final prediction model for the 2022 House Midterms.</p>
+</div>
+<div id="pooled-linear-regression-model" class="section level2">
+<h2>Pooled Linear Regression Model</h2>
+<div id="model-equation" class="section level3">
+<h3>Model Equation</h3>
+<div class="figure">
+<img src="equation.png" alt="" />
+<p class="caption">Model Equation</p>
+</div>
+<pre><code>## 
+## Pooled Linear Regression Model of Democratic Two-Party Vote Share
+## ========================================================================
+##                                                Dependent variable:      
+##                                          -------------------------------
+##                                          Democratic Two-Party Vote Share
+## ------------------------------------------------------------------------
+## Generic Ballot for Democrats                        0.282***            
+##                                                      (0.025)            
+##                                                                         
+## GDP % Difference from Q6-Q7                         -0.119***           
+##                                                      (0.028)            
+##                                                                         
+## Democratic Incumbent in District                    3.022***            
+##                                                      (0.422)            
+##                                                                         
+## Democratic Party is in Power in House               -1.939***           
+##                                                      (0.245)            
+##                                                                         
+## Democratic President is in Power                    -3.495***           
+##                                                      (0.226)            
+##                                                                         
+## Previous Democratic Two-Party Vote Share            0.328***            
+##                                                      (0.006)            
+##                                                                         
+## Average Expert Ratings                              -4.442***           
+##                                                      (0.066)            
+##                                                                         
+## Constant                                            40.832***           
+##                                                      (1.291)            
+##                                                                         
+## ------------------------------------------------------------------------
+## Observations                                         14,436             
+## R2                                                    0.720             
+## Adjusted R2                                           0.720             
+## Residual Std. Error                            12.907 (df = 14428)      
+## F Statistic                               5,312.176*** (df = 7; 14428)  
+## ========================================================================
+## Note:                                        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+</div>
+</div>
+<div id="predictions-for-the-2022-house-midterms" class="section level2">
+<h2>Predictions for the 2022 House Midterms</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/prediction%20graph-1.png" width="672" /></p>
+<div id="lower-and-upper-bounds-of-predictions" class="section level3">
+<h3>Lower and Upper Bounds of Predictions</h3>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+</div>

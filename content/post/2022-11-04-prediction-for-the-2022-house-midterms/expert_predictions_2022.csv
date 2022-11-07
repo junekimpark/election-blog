@@ -1,0 +1,438 @@
+"","district","state","avg_rating_prev","year","cook","rothenberg","sabatos_crystal_ball","avg_rating"
+"1",1,"Alabama",7,NA,NA,NA,NA,7
+"2",2,"Alabama",7,NA,NA,NA,NA,7
+"3",3,"Alabama",7,NA,NA,NA,NA,7
+"4",4,"Alabama",7,NA,NA,NA,NA,7
+"5",5,"Alabama",7,NA,NA,NA,NA,7
+"6",6,"Alabama",7,NA,NA,NA,NA,7
+"7",7,"Alabama",1,NA,NA,NA,NA,1
+"8",0,"Alaska",5.41666666666667,2022,4,4.75,4,4.25
+"9",1,"Arizona",2.25,2022,4,5.5,5,4.83333333333333
+"10",2,"Arizona",1,2022,5,5.5,5,5.16666666666667
+"11",3,"Arizona",1,NA,NA,NA,NA,1
+"12",4,"Arizona",7,2022,2,1.75,3,2.25
+"13",5,"Arizona",7,NA,NA,NA,NA,7
+"14",6,"Arizona",3.66666666666667,2022,5,4.75,5,4.91666666666667
+"15",7,"Arizona",1,NA,NA,NA,NA,1
+"16",8,"Arizona",7,NA,NA,NA,NA,7
+"17",9,"Arizona",1,NA,NA,NA,NA,1
+"18",1,"Arkansas",7,NA,NA,NA,NA,7
+"19",2,"Arkansas",4.33333333333333,NA,NA,NA,NA,4.33333333333333
+"20",3,"Arkansas",7,NA,NA,NA,NA,7
+"21",4,"Arkansas",7,NA,NA,NA,NA,7
+"22",1,"California",6.66666666666667,NA,NA,NA,NA,6.66666666666667
+"23",2,"California",1,NA,NA,NA,NA,1
+"24",3,"California",1,2022,6,6.25,6,6.08333333333333
+"25",4,"California",6.33333333333333,NA,NA,NA,NA,6.33333333333333
+"26",5,"California",1,NA,NA,NA,NA,1
+"27",6,"California",1,2022,1,1,1,1
+"28",7,"California",1,NA,NA,NA,NA,1
+"29",8,"California",7,NA,NA,NA,NA,7
+"30",9,"California",1,2022,3,1.75,3,2.58333333333333
+"31",10,"California",1.33333333333333,NA,NA,NA,NA,1.33333333333333
+"32",11,"California",1,NA,NA,NA,NA,1
+"33",12,"California",1,NA,NA,NA,NA,1
+"34",13,"California",1,2022,4,2.5,4,3.5
+"35",14,"California",1,NA,NA,NA,NA,1
+"36",15,"California",1,NA,NA,NA,NA,1
+"37",16,"California",1,NA,NA,NA,NA,1
+"38",17,"California",1,NA,NA,NA,NA,1
+"39",18,"California",1,NA,NA,NA,NA,1
+"40",19,"California",1,NA,NA,NA,NA,1
+"41",20,"California",1,NA,NA,NA,NA,1
+"42",21,"California",3.66666666666667,2022,1,1,2,1.33333333333333
+"43",22,"California",6.66666666666667,2022,4,4,4,4
+"44",23,"California",7,2022,7,7,7,7
+"45",24,"California",1,NA,NA,NA,NA,1
+"46",25,"California",4.33333333333333,2022,1,1,2,1.33333333333333
+"47",26,"California",1,2022,1,1,2,1.33333333333333
+"48",27,"California",1,2022,4,4,4,4
+"49",28,"California",1,NA,NA,NA,NA,1
+"50",29,"California",1,NA,NA,NA,NA,1
+"51",30,"California",1,NA,NA,NA,NA,1
+"52",31,"California",1,NA,NA,NA,NA,1
+"53",32,"California",1,NA,NA,NA,NA,1
+"54",33,"California",1,NA,NA,NA,NA,1
+"55",34,"California",1,NA,NA,NA,NA,1
+"56",35,"California",1,NA,NA,NA,NA,1
+"57",36,"California",1,NA,NA,NA,NA,1
+"58",37,"California",1,NA,NA,NA,NA,1
+"59",38,"California",1,NA,NA,NA,NA,1
+"60",39,"California",2.25,NA,NA,NA,NA,2.25
+"61",40,"California",1,2022,6,6.25,6,6.08333333333333
+"62",41,"California",1,2022,5,7,6,6
+"63",42,"California",7,NA,NA,NA,NA,7
+"64",43,"California",1,NA,NA,NA,NA,1
+"65",44,"California",1,NA,NA,NA,NA,1
+"66",45,"California",1,2022,5,5.5,5,5.16666666666667
+"67",46,"California",1,NA,NA,NA,NA,1
+"68",47,"California",1,2022,3,2.5,3,2.83333333333333
+"69",48,"California",2.83333333333333,NA,NA,NA,NA,2.83333333333333
+"70",49,"California",1,2022,3,1.75,3,2.58333333333333
+"71",50,"California",5.75,NA,NA,NA,NA,5.75
+"72",51,"California",1,NA,NA,NA,NA,1
+"73",52,"California",1,NA,NA,NA,NA,1
+"74",53,"California",1,NA,NA,NA,NA,1
+"75",1,"Colorado",1,NA,NA,NA,NA,1
+"76",2,"Colorado",1,NA,NA,NA,NA,1
+"77",3,"Colorado",4.91666666666667,2022,7,7,6,6.66666666666667
+"78",4,"Colorado",7,NA,NA,NA,NA,7
+"79",5,"Colorado",7,2022,7,7,7,7
+"80",6,"Colorado",1,NA,NA,NA,NA,1
+"81",7,"Colorado",1,2022,2,1.75,3,2.25
+"82",1,"Connecticut",1,2022,1,1,1,1
+"83",2,"Connecticut",1,2022,2,1,2,1.66666666666667
+"84",3,"Connecticut",1,2022,1,1,1,1
+"85",4,"Connecticut",1,2022,1,1,1,1
+"86",5,"Connecticut",1,2022,3,1.75,3,2.58333333333333
+"87",0,"Delaware",1,NA,NA,NA,NA,1
+"88",1,"Florida",7,NA,NA,NA,NA,7
+"89",2,"Florida",7,2022,7,7,7,7
+"90",3,"Florida",7,NA,NA,NA,NA,7
+"91",4,"Florida",7,2022,7,7,7,7
+"92",5,"Florida",1,NA,NA,NA,NA,1
+"93",6,"Florida",7,NA,NA,NA,NA,7
+"94",7,"Florida",1,2022,6,6.25,7,6.41666666666667
+"95",8,"Florida",7,NA,NA,NA,NA,7
+"96",9,"Florida",1,2022,1,1,1,1
+"97",10,"Florida",1,NA,NA,NA,NA,1
+"98",11,"Florida",7,NA,NA,NA,NA,7
+"99",12,"Florida",7,NA,NA,NA,NA,7
+"100",13,"Florida",1,2022,6,6.25,6,6.08333333333333
+"101",14,"Florida",1,2022,1,1,1,1
+"102",15,"Florida",5.16666666666667,2022,6,6.25,6,6.08333333333333
+"103",16,"Florida",6.08333333333333,2022,7,7,7,7
+"104",17,"Florida",7,NA,NA,NA,NA,7
+"105",18,"Florida",6.08333333333333,NA,NA,NA,NA,6.08333333333333
+"106",19,"Florida",7,NA,NA,NA,NA,7
+"107",20,"Florida",1,NA,NA,NA,NA,1
+"108",21,"Florida",1,NA,NA,NA,NA,1
+"109",22,"Florida",1,2022,1,1,1,1
+"110",23,"Florida",1,2022,1,1,1,1
+"111",24,"Florida",1,NA,NA,NA,NA,1
+"112",25,"Florida",7,NA,NA,NA,NA,7
+"113",26,"Florida",3.08333333333333,NA,NA,NA,NA,3.08333333333333
+"114",27,"Florida",1.66666666666667,2022,6,6.25,6,6.08333333333333
+"115",1,"Georgia",7,NA,NA,NA,NA,7
+"116",2,"Georgia",1,2022,2,1.75,2,1.91666666666667
+"117",3,"Georgia",7,NA,NA,NA,NA,7
+"118",4,"Georgia",1,NA,NA,NA,NA,1
+"119",5,"Georgia",1,NA,NA,NA,NA,1
+"120",6,"Georgia",1.91666666666667,2022,7,6.25,7,6.75
+"121",7,"Georgia",3.08333333333333,NA,NA,NA,NA,3.08333333333333
+"122",8,"Georgia",7,NA,NA,NA,NA,7
+"123",9,"Georgia",7,NA,NA,NA,NA,7
+"124",10,"Georgia",7,NA,NA,NA,NA,7
+"125",11,"Georgia",7,NA,NA,NA,NA,7
+"126",12,"Georgia",7,2022,7,7,7,7
+"127",13,"Georgia",1,NA,NA,NA,NA,1
+"128",14,"Georgia",7,NA,NA,NA,NA,7
+"129",1,"Hawaii",1,NA,NA,NA,NA,1
+"130",2,"Hawaii",1,NA,NA,NA,NA,1
+"131",1,"Idaho",7,NA,NA,NA,NA,7
+"132",2,"Idaho",7,NA,NA,NA,NA,7
+"133",1,"Illinois",1,NA,NA,NA,NA,1
+"134",2,"Illinois",1,NA,NA,NA,NA,1
+"135",3,"Illinois",1,NA,NA,NA,NA,1
+"136",4,"Illinois",1,NA,NA,NA,NA,1
+"137",5,"Illinois",1,NA,NA,NA,NA,1
+"138",6,"Illinois",1,2022,3,1.75,2,2.25
+"139",7,"Illinois",1,NA,NA,NA,NA,1
+"140",8,"Illinois",1,2022,1,1,1,1
+"141",9,"Illinois",1,NA,NA,NA,NA,1
+"142",10,"Illinois",1,NA,NA,NA,NA,1
+"143",11,"Illinois",1,2022,2,1,2,1.66666666666667
+"144",12,"Illinois",7,NA,NA,NA,NA,7
+"145",13,"Illinois",4.33333333333333,2022,3,2.5,3,2.83333333333333
+"146",14,"Illinois",1.66666666666667,2022,2,1.75,3,2.25
+"147",15,"Illinois",7,NA,NA,NA,NA,7
+"148",16,"Illinois",7,NA,NA,NA,NA,7
+"149",17,"Illinois",2,2022,4,4,4,4
+"150",18,"Illinois",7,NA,NA,NA,NA,7
+"151",1,"Indiana",1,2022,4,2.5,4,3.5
+"152",2,"Indiana",7,NA,NA,NA,NA,7
+"153",3,"Indiana",7,NA,NA,NA,NA,7
+"154",4,"Indiana",7,NA,NA,NA,NA,7
+"155",5,"Indiana",3.41666666666667,NA,NA,NA,NA,3.41666666666667
+"156",6,"Indiana",7,NA,NA,NA,NA,7
+"157",7,"Indiana",1,NA,NA,NA,NA,1
+"158",8,"Indiana",7,NA,NA,NA,NA,7
+"159",9,"Indiana",7,NA,NA,NA,NA,7
+"160",1,"Iowa",3.16666666666667,2022,6,5.5,6,5.83333333333333
+"161",2,"Iowa",3.16666666666667,2022,6,5.5,6,5.83333333333333
+"162",3,"Iowa",2.83333333333333,2022,5,4,5,4.66666666666667
+"163",4,"Iowa",7,NA,NA,NA,NA,7
+"164",1,"Kansas",7,NA,NA,NA,NA,7
+"165",2,"Kansas",6.33333333333333,NA,NA,NA,NA,6.33333333333333
+"166",3,"Kansas",1,2022,4,3.25,4,3.75
+"167",4,"Kansas",7,NA,NA,NA,NA,7
+"168",1,"Kentucky",7,NA,NA,NA,NA,7
+"169",2,"Kentucky",7,NA,NA,NA,NA,7
+"170",3,"Kentucky",1,NA,NA,NA,NA,1
+"171",4,"Kentucky",7,NA,NA,NA,NA,7
+"172",5,"Kentucky",7,NA,NA,NA,NA,7
+"173",6,"Kentucky",6.33333333333333,NA,NA,NA,NA,6.33333333333333
+"174",1,"Louisiana",7,NA,NA,NA,NA,7
+"175",3,"Louisiana",7,NA,NA,NA,NA,7
+"176",4,"Louisiana",7,NA,NA,NA,NA,7
+"177",2,"Louisiana",1,NA,NA,NA,NA,1
+"178",5,"Louisiana",7,NA,NA,NA,NA,7
+"179",5,"Louisiana",7,NA,NA,NA,NA,7
+"180",6,"Louisiana",7,NA,NA,NA,NA,7
+"181",1,"Maine",1,NA,NA,NA,NA,1
+"182",2,"Maine",1.66666666666667,2022,4,4,4,4
+"183",2,"Maine",1.66666666666667,2022,4,4,4,4
+"184",1,"Maryland",7,2022,7,7,7,7
+"185",2,"Maryland",1,2022,1,1,1,1
+"186",3,"Maryland",1,NA,NA,NA,NA,1
+"187",4,"Maryland",1,NA,NA,NA,NA,1
+"188",5,"Maryland",1,NA,NA,NA,NA,1
+"189",6,"Maryland",1,2022,2,1.75,3,2.25
+"190",7,"Maryland",1,NA,NA,NA,NA,1
+"191",8,"Maryland",1,NA,NA,NA,NA,1
+"192",1,"Massachusetts",1,NA,NA,NA,NA,1
+"193",2,"Massachusetts",1,NA,NA,NA,NA,1
+"194",3,"Massachusetts",1,NA,NA,NA,NA,1
+"195",4,"Massachusetts",1,NA,NA,NA,NA,1
+"196",5,"Massachusetts",1,NA,NA,NA,NA,1
+"197",6,"Massachusetts",1,NA,NA,NA,NA,1
+"198",7,"Massachusetts",1,NA,NA,NA,NA,1
+"199",8,"Massachusetts",1,NA,NA,NA,NA,1
+"200",9,"Massachusetts",1,2022,1,1,1,1
+"201",1,"Michigan",7,NA,NA,NA,NA,7
+"202",2,"Michigan",7,NA,NA,NA,NA,7
+"203",3,"Michigan",4.33333333333333,2022,3,3.25,3,3.08333333333333
+"204",4,"Michigan",7,2022,7,7,7,7
+"205",5,"Michigan",1,NA,NA,NA,NA,1
+"206",6,"Michigan",5.41666666666667,NA,NA,NA,NA,5.41666666666667
+"207",7,"Michigan",7,2022,4,3.25,4,3.75
+"208",8,"Michigan",2,2022,4,3.25,4,3.75
+"209",9,"Michigan",1,NA,NA,NA,NA,1
+"210",10,"Michigan",7,2022,6,5.5,5,5.5
+"211",11,"Michigan",2,2022,1,1,1,1
+"212",12,"Michigan",1,NA,NA,NA,NA,1
+"213",13,"Michigan",1,NA,NA,NA,NA,1
+"214",14,"Michigan",1,NA,NA,NA,NA,1
+"215",1,"Minnesota",3.41666666666667,2022,6,7,6,6.33333333333333
+"216",2,"Minnesota",1.66666666666667,2022,4,4,4,4
+"217",3,"Minnesota",1,2022,1,1,1,1
+"218",4,"Minnesota",1,NA,NA,NA,NA,1
+"219",5,"Minnesota",1,NA,NA,NA,NA,1
+"220",6,"Minnesota",7,NA,NA,NA,NA,7
+"221",7,"Minnesota",4.33333333333333,NA,NA,NA,NA,4.33333333333333
+"222",8,"Minnesota",7,2022,7,7,7,7
+"223",1,"Mississippi",7,NA,NA,NA,NA,7
+"224",2,"Mississippi",1,NA,NA,NA,NA,1
+"225",3,"Mississippi",7,NA,NA,NA,NA,7
+"226",4,"Mississippi",7,NA,NA,NA,NA,7
+"227",1,"Missouri",1,NA,NA,NA,NA,1
+"228",2,"Missouri",4.08333333333333,2022,7,7,7,7
+"229",3,"Missouri",7,NA,NA,NA,NA,7
+"230",4,"Missouri",7,NA,NA,NA,NA,7
+"231",5,"Missouri",1,NA,NA,NA,NA,1
+"232",6,"Missouri",7,NA,NA,NA,NA,7
+"233",7,"Missouri",7,NA,NA,NA,NA,7
+"234",8,"Missouri",7,NA,NA,NA,NA,7
+"235",0,"Montana",5.16666666666667,2022,6,6.25,6,6.08333333333333
+"236",1,"Nebraska",7,2022,7,7,7,7
+"237",2,"Nebraska",4.08333333333333,2022,4,4,5,4.33333333333333
+"238",3,"Nebraska",7,NA,NA,NA,NA,7
+"239",1,"Nevada",1,2022,4,3.25,3,3.41666666666667
+"240",2,"Nevada",7,2022,7,7,7,7
+"241",3,"Nevada",2.58333333333333,2022,4,3.25,4,3.75
+"242",4,"Nevada",1.66666666666667,2022,4,2.5,3,3.16666666666667
+"243",1,"New Hampshire",1.91666666666667,2022,4,3.25,3,3.41666666666667
+"244",2,"New Hampshire",1.33333333333333,2022,3,1.75,3,2.58333333333333
+"245",1,"New Jersey",1,2022,1,1,1,1
+"246",2,"New Jersey",3.41666666666667,2022,7,7,7,7
+"247",3,"New Jersey",1.66666666666667,2022,2,1,2,1.66666666666667
+"248",4,"New Jersey",7,NA,NA,NA,NA,7
+"249",5,"New Jersey",1,2022,2,1,2,1.66666666666667
+"250",6,"New Jersey",1,NA,NA,NA,NA,1
+"251",7,"New Jersey",2.58333333333333,2022,5,4,5,4.66666666666667
+"252",8,"New Jersey",1,NA,NA,NA,NA,1
+"253",9,"New Jersey",1,NA,NA,NA,NA,1
+"254",10,"New Jersey",1,NA,NA,NA,NA,1
+"255",11,"New Jersey",1,2022,1,1,2,1.33333333333333
+"256",12,"New Jersey",1,NA,NA,NA,NA,1
+"257",1,"New Mexico",1,2022,1,1,2,1.33333333333333
+"258",2,"New Mexico",3.66666666666667,2022,4,4,4,4
+"259",3,"New Mexico",1,2022,2,1,2,1.66666666666667
+"260",1,"New York",5.16666666666667,2022,5,4.75,5,4.91666666666667
+"261",2,"New York",4.33333333333333,2022,6,5.5,6,5.83333333333333
+"262",3,"New York",1,2022,3,2.5,4,3.16666666666667
+"263",4,"New York",1,2022,2,1.75,2,1.91666666666667
+"264",5,"New York",1,NA,NA,NA,NA,1
+"265",6,"New York",1,NA,NA,NA,NA,1
+"266",7,"New York",1,NA,NA,NA,NA,1
+"267",8,"New York",1,NA,NA,NA,NA,1
+"268",9,"New York",1,NA,NA,NA,NA,1
+"269",10,"New York",1,NA,NA,NA,NA,1
+"270",11,"New York",3.66666666666667,2022,6,6.25,6,6.08333333333333
+"271",12,"New York",1,NA,NA,NA,NA,1
+"272",13,"New York",1,NA,NA,NA,NA,1
+"273",14,"New York",1,NA,NA,NA,NA,1
+"274",15,"New York",1,NA,NA,NA,NA,1
+"275",16,"New York",1,NA,NA,NA,NA,1
+"276",17,"New York",1,2022,3,1.75,3,2.58333333333333
+"277",18,"New York",1.33333333333333,2022,3,2.5,3,2.83333333333333
+"278",19,"New York",1.66666666666667,2022,4,3.25,4,3.75
+"279",20,"New York",1,2022,1,1,1,1
+"280",21,"New York",7,NA,NA,NA,NA,7
+"281",22,"New York",3.41666666666667,2022,4,3.25,4,3.75
+"282",23,"New York",7,NA,NA,NA,NA,7
+"283",24,"New York",4.58333333333333,NA,NA,NA,NA,4.58333333333333
+"284",25,"New York",1,2022,1,1,1,1
+"285",26,"New York",1,NA,NA,NA,NA,1
+"286",27,"New York",6.66666666666667,NA,NA,NA,NA,6.66666666666667
+"287",1,"North Carolina",1,2022,3,2.5,3,2.83333333333333
+"288",2,"North Carolina",1.58333333333333,NA,NA,NA,NA,1.58333333333333
+"289",3,"North Carolina",7,NA,NA,NA,NA,7
+"290",4,"North Carolina",1,NA,NA,NA,NA,1
+"291",5,"North Carolina",7,NA,NA,NA,NA,7
+"292",6,"North Carolina",1.58333333333333,2022,2,1,2,1.66666666666667
+"293",7,"North Carolina",7,2022,7,7,7,7
+"294",8,"North Carolina",4.91666666666667,NA,NA,NA,NA,4.91666666666667
+"295",9,"North Carolina",6,2022,7,7,7,7
+"296",10,"North Carolina",7,NA,NA,NA,NA,7
+"297",11,"North Carolina",5.16666666666667,NA,NA,NA,NA,5.16666666666667
+"298",12,"North Carolina",1,NA,NA,NA,NA,1
+"299",13,"North Carolina",7,2022,4,4,5,4.33333333333333
+"300",0,"North Dakota",7,NA,NA,NA,NA,7
+"301",1,"Ohio",3.41666666666667,2022,4,4,4,4
+"302",2,"Ohio",7,NA,NA,NA,NA,7
+"303",3,"Ohio",1,NA,NA,NA,NA,1
+"304",4,"Ohio",7,NA,NA,NA,NA,7
+"305",5,"Ohio",7,NA,NA,NA,NA,7
+"306",6,"Ohio",7,NA,NA,NA,NA,7
+"307",7,"Ohio",7,2022,7,7,7,7
+"308",8,"Ohio",7,NA,NA,NA,NA,7
+"309",9,"Ohio",1,2022,4,3.25,3,3.41666666666667
+"310",10,"Ohio",6.08333333333333,2022,7,7,7,7
+"311",11,"Ohio",1,NA,NA,NA,NA,1
+"312",12,"Ohio",6.33333333333333,NA,NA,NA,NA,6.33333333333333
+"313",13,"Ohio",1,2022,4,4,4,4
+"314",14,"Ohio",7,NA,NA,NA,NA,7
+"315",15,"Ohio",7,2022,7,7,7,7
+"316",16,"Ohio",7,NA,NA,NA,NA,7
+"317",1,"Oklahoma",7,NA,NA,NA,NA,7
+"318",2,"Oklahoma",7,NA,NA,NA,NA,7
+"319",3,"Oklahoma",7,NA,NA,NA,NA,7
+"320",4,"Oklahoma",7,NA,NA,NA,NA,7
+"321",5,"Oklahoma",3.66666666666667,NA,NA,NA,NA,3.66666666666667
+"322",1,"Oregon",1,NA,NA,NA,NA,1
+"323",2,"Oregon",7,NA,NA,NA,NA,7
+"324",3,"Oregon",1,NA,NA,NA,NA,1
+"325",4,"Oregon",2.58333333333333,2022,3,1.75,2,2.25
+"326",5,"Oregon",1,2022,4,3.25,4,3.75
+"327",1,"Pennsylvania",5.16666666666667,2022,7,7,6,6.66666666666667
+"328",2,"Pennsylvania",1,NA,NA,NA,NA,1
+"329",3,"Pennsylvania",1,NA,NA,NA,NA,1
+"330",4,"Pennsylvania",1,NA,NA,NA,NA,1
+"331",5,"Pennsylvania",1,NA,NA,NA,NA,1
+"332",6,"Pennsylvania",1,2022,1,1,2,1.33333333333333
+"333",7,"Pennsylvania",1.66666666666667,2022,5,4,4,4.33333333333333
+"334",8,"Pennsylvania",2,2022,4,4,4,4
+"335",9,"Pennsylvania",7,NA,NA,NA,NA,7
+"336",10,"Pennsylvania",3.66666666666667,2022,7,7,7,7
+"337",11,"Pennsylvania",7,NA,NA,NA,NA,7
+"338",12,"Pennsylvania",7,2022,2,1,1,1.33333333333333
+"339",13,"Pennsylvania",7,NA,NA,NA,NA,7
+"340",14,"Pennsylvania",7,NA,NA,NA,NA,7
+"341",15,"Pennsylvania",7,NA,NA,NA,NA,7
+"342",16,"Pennsylvania",6.66666666666667,NA,NA,NA,NA,6.66666666666667
+"343",17,"Pennsylvania",1.66666666666667,2022,4,4,4,4
+"344",18,"Pennsylvania",1,NA,NA,NA,NA,1
+"345",2,"Rhode Island",1,2022,4,2.5,3,3.16666666666667
+"346",1,"Rhode Island",1,NA,NA,NA,NA,1
+"347",1,"South Carolina",2.83333333333333,2022,7,7,7,7
+"348",2,"South Carolina",6.66666666666667,NA,NA,NA,NA,6.66666666666667
+"349",3,"South Carolina",7,NA,NA,NA,NA,7
+"350",4,"South Carolina",7,NA,NA,NA,NA,7
+"351",5,"South Carolina",7,NA,NA,NA,NA,7
+"352",6,"South Carolina",1,NA,NA,NA,NA,1
+"353",7,"South Carolina",7,NA,NA,NA,NA,7
+"354",0,"South Dakota",7,NA,NA,NA,NA,7
+"355",1,"Tennessee",7,NA,NA,NA,NA,7
+"356",2,"Tennessee",7,NA,NA,NA,NA,7
+"357",3,"Tennessee",7,NA,NA,NA,NA,7
+"358",4,"Tennessee",7,NA,NA,NA,NA,7
+"359",5,"Tennessee",1,2022,7,6.25,7,6.75
+"360",6,"Tennessee",7,NA,NA,NA,NA,7
+"361",7,"Tennessee",7,NA,NA,NA,NA,7
+"362",8,"Tennessee",7,NA,NA,NA,NA,7
+"363",9,"Tennessee",1,NA,NA,NA,NA,1
+"364",1,"Texas",7,NA,NA,NA,NA,7
+"365",2,"Texas",6.33333333333333,NA,NA,NA,NA,6.33333333333333
+"366",3,"Texas",5.5,NA,NA,NA,NA,5.5
+"367",4,"Texas",7,NA,NA,NA,NA,7
+"368",5,"Texas",7,NA,NA,NA,NA,7
+"369",6,"Texas",6.08333333333333,NA,NA,NA,NA,6.08333333333333
+"370",7,"Texas",1.91666666666667,NA,NA,NA,NA,1.91666666666667
+"371",8,"Texas",7,NA,NA,NA,NA,7
+"372",9,"Texas",1,NA,NA,NA,NA,1
+"373",10,"Texas",4.83333333333333,NA,NA,NA,NA,4.83333333333333
+"374",11,"Texas",7,NA,NA,NA,NA,7
+"375",12,"Texas",7,NA,NA,NA,NA,7
+"376",13,"Texas",7,NA,NA,NA,NA,7
+"377",14,"Texas",7,NA,NA,NA,NA,7
+"378",15,"Texas",1,2022,5,5.5,6,5.5
+"379",16,"Texas",1,NA,NA,NA,NA,1
+"380",17,"Texas",7,NA,NA,NA,NA,7
+"381",18,"Texas",1,NA,NA,NA,NA,1
+"382",19,"Texas",7,NA,NA,NA,NA,7
+"383",20,"Texas",1,NA,NA,NA,NA,1
+"384",21,"Texas",4.33333333333333,NA,NA,NA,NA,4.33333333333333
+"385",22,"Texas",4.33333333333333,NA,NA,NA,NA,4.33333333333333
+"386",23,"Texas",3.08333333333333,2022,7,7,7,7
+"387",24,"Texas",3.08333333333333,NA,NA,NA,NA,3.08333333333333
+"388",25,"Texas",6.08333333333333,NA,NA,NA,NA,6.08333333333333
+"389",26,"Texas",7,NA,NA,NA,NA,7
+"390",27,"Texas",7,NA,NA,NA,NA,7
+"391",28,"Texas",1,2022,3,2.5,4,3.16666666666667
+"392",29,"Texas",1,NA,NA,NA,NA,1
+"393",30,"Texas",1,NA,NA,NA,NA,1
+"394",31,"Texas",6,NA,NA,NA,NA,6
+"395",32,"Texas",1.66666666666667,NA,NA,NA,NA,1.66666666666667
+"396",34,"Texas",1,2022,3,2.5,3,2.83333333333333
+"397",33,"Texas",1,NA,NA,NA,NA,1
+"398",35,"Texas",1,NA,NA,NA,NA,1
+"399",36,"Texas",7,NA,NA,NA,NA,7
+"400",1,"Utah",7,NA,NA,NA,NA,7
+"401",2,"Utah",7,NA,NA,NA,NA,7
+"402",3,"Utah",7,NA,NA,NA,NA,7
+"403",4,"Utah",3.41666666666667,NA,NA,NA,NA,3.41666666666667
+"404",0,"Vermont",1,NA,NA,NA,NA,1
+"405",1,"Virginia",7,2022,7,7,7,7
+"406",2,"Virginia",2.58333333333333,2022,4,4,4,4
+"407",3,"Virginia",1,NA,NA,NA,NA,1
+"408",4,"Virginia",1,NA,NA,NA,NA,1
+"409",5,"Virginia",4.33333333333333,2022,7,7,7,7
+"410",6,"Virginia",7,NA,NA,NA,NA,7
+"411",7,"Virginia",3.08333333333333,2022,3,3.25,3,3.08333333333333
+"412",8,"Virginia",1,NA,NA,NA,NA,1
+"413",9,"Virginia",7,NA,NA,NA,NA,7
+"414",10,"Virginia",1,2022,1,1,2,1.33333333333333
+"415",11,"Virginia",1,NA,NA,NA,NA,1
+"416",1,"Washington",1,NA,NA,NA,NA,1
+"417",2,"Washington",1,NA,NA,NA,NA,1
+"418",3,"Washington",5.16666666666667,2022,5,6.25,6,5.75
+"419",4,"Washington",7,2022,7,7,7,7
+"420",5,"Washington",7,2022,7,7,7,7
+"421",6,"Washington",1,2022,1,1,1,1
+"422",7,"Washington",1,NA,NA,NA,NA,1
+"423",8,"Washington",2,2022,4,4,3,3.66666666666667
+"424",9,"Washington",1,NA,NA,NA,NA,1
+"425",10,"Washington",1,NA,NA,NA,NA,1
+"426",1,"West Virginia",7,NA,NA,NA,NA,7
+"427",2,"West Virginia",7,NA,NA,NA,NA,7
+"428",3,"West Virginia",7,NA,NA,NA,NA,7
+"429",1,"Wisconsin",7,2022,7,7,7,7
+"430",2,"Wisconsin",1,NA,NA,NA,NA,1
+"431",3,"Wisconsin",2,2022,5,5.5,5,5.16666666666667
+"432",4,"Wisconsin",1,NA,NA,NA,NA,1
+"433",5,"Wisconsin",7,NA,NA,NA,NA,7
+"434",6,"Wisconsin",7,NA,NA,NA,NA,7
+"435",7,"Wisconsin",7,NA,NA,NA,NA,7
+"436",8,"Wisconsin",7,NA,NA,NA,NA,7
+"437",0,"Wyoming",7,NA,NA,NA,NA,7

@@ -6,7 +6,18 @@
     <description>Recent content on June Park&#39;s Election Analytics Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prediction for the 2022 House Midterms </title>
+      <link>https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/</link>
+      <pubDate>Fri, 04 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/</guid>
+      <description>Introduction In this week’s blog, I present my final prediction model for the 2022 House Midterms.
+Pooled Linear Regression Model Model Equation Model Equation
+## ## Pooled Linear Regression Model of Democratic Two-Party Vote Share ## ======================================================================== ## Dependent variable: ## ------------------------------- ## Democratic Two-Party Vote Share ## ------------------------------------------------------------------------ ## Generic Ballot for Democrats 0.282*** ## (0.025) ## ## GDP % Difference from Q6-Q7 -0.119*** ## (0.028) ## ## Democratic Incumbent in District 3.</description>
+    </item>
+    
     <item>
       <title>Blog 7: Shocks and Unexpected Events</title>
       <link>https://junekimpark.github.io/election-blog/post/2022-10-26-blog-7-shocks-and-unexpected-events/</link>

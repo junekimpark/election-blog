@@ -90,6 +90,8 @@ for (sd in state_dists){
     filter(st_cd_fips == sd)
   preds <- c(preds, predict(m, new_data))
 }
+
+output <- tibble(state_dists, preds, r2, coeff_gdp, coeff_incumb, coeff_support, coeff_interaction)
 ```
 
 ```{r, include = FALSE}
@@ -99,11 +101,74 @@ all <- lm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incu
 # pooled linear regression model
 pooled <- plm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incumb + gdp_percent_difference*incumb, data = district_model_data, model = "pooling")
 
-plmtest(pooled, type = c("bp"))
+pooled_polls <- plm(DemVotesMajorPercent ~ average_support, data = district_model_data, model = "pooling")
+
+pooled_gdp <- plm(DemVotesMajorPercent ~ gdp_percent_difference, data = district_model_data, model = "pooling")
+
+pooled_incumb <- plm(DemVotesMajorPercent ~ incumb, data = district_model_data, model = "pooling")
 ```
 
 ```{r, warning = FALSE}
-stargazer(m, pooled, type = "text")
+stargazer(pooled, pooled_incumb, type = "text")
 ```
 
+```{r}
+# r squared
+ggplot(output, aes(x = r2)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "R-Squared Values for Models in Each District",
+       subtitle = "House Districts",
+       x = "R-Squared",
+       y = "Count")
+
+# gdp
+ggplot(output, aes(x = coeff_gdp)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-100, 100) + 
+  geom_vline(xintercept = median(output$coeff_gdp, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "GDP Coefficient",
+       y = "Count") +
+  ylim(0, 50)
+
+# generic ballot
+ggplot(output, aes(x = coeff_support)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-5, 5) +  
+  geom_vline(xintercept = median(output$coeff_support, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Generic Ballot Coefficient",
+       y = "Count") +
+  ylim(0, 80)
+
+# incumbency
+ggplot(output, aes(x = coeff_incumb)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-10, 10) +  
+  geom_vline(xintercept = median(output$coeff_incumb, na.rm = TRUE),
+             color = "red", size = 1) + 
+  theme_few() +
+  labs(x = "Generic Ballot Coefficient",
+       y = "Count") +
+  ylim(0, 130)
+```
+
+```{r}
+preds_df <- tibble(state_dists, preds)
+
+length(preds[preds <= 50]) # 212 Republican seats
+length(preds[preds > 50]) # 223 Democrat seats
+
+ggplot(output %>% mutate(preds = ifelse(preds > 100, 100, preds),
+                                        preds = ifelse(preds < 0, 0, preds)), 
+       aes(x = preds)) +
+  geom_histogram(bins = 30, color = "white") +
+  theme_few() +
+  labs(title = "2022 Election Predictions - Turnout Model",
+       subtitle = "Average Turnout",
+       x = "Democratic Two-Party Vote-Share (%)",
+       y = "Count") +
+  xlim(-5, 105) +
+  ylim(0,50)
+```
 
