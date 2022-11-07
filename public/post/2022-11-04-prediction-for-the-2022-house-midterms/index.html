@@ -66,16 +66,33 @@
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>In this week’s blog, I present my final prediction model for the 2022 House Midterms.</p>
+<p>In this week’s blog, I present my final prediction model for the 2022 House Midterms. My final prediction model is a pooled linear regression model using data of almost all 435 districts from 1950-2020 to then predict for 2022 at the district level. I predict that the <strong>Democrats will win 216 seats</strong>, while the <strong>Republicans will win 219 seats</strong>, resulting in a Republican victory in the House of Representatives.</p>
 </div>
-<div id="pooled-linear-regression-model" class="section level2">
-<h2>Pooled Linear Regression Model</h2>
-<div id="model-equation" class="section level3">
-<h3>Model Equation</h3>
+<div id="the-model" class="section level2">
+<h2>The Model</h2>
 <div class="figure">
 <img src="equation.png" alt="" />
 <p class="caption">Model Equation</p>
 </div>
+<p>The dependent variable is Democratic Two-Party Vote Share (%) at the district level.</p>
+<p>The independent variables are as follows:
+1. <strong>Generic Ballot</strong>: the average generic ballot score for Democrats (filtered for 52 days before the election)
+2. <strong>GDP % Difference</strong>: The percent difference in GDP from Q6 to Q7
+3. <strong>Dem Incumbent in District</strong>: whether the incumbent in the district at the time of the election is a Democrat (1) or not (0)
+4. <strong>Dem Party is in Power in House</strong>: whether the party controlling the house at the time of the election is the Democratic Party (1) or not
+5. <strong>Dem President is in Power</strong>: whether the president at the time of the election is a Democrat (1) or not (0)
+6. <strong>Previous Dem Two Party Vote Share</strong>: the previous Democratic two-party vote share (%) in the district
+7. <strong>Expert Ratings</strong>: the average of Cook Political Report, Inside Elections, and Sabato’s Crystal Ball ratings for the district (1 - solid Democrat → 7 - solid Republican)</p>
+<p>Using this pooled linear regression, I then predicted for the Democratic two-party vote share at the district level. Then, I aggregated the data so that any districts with less than or equal to 50% for Democratic two-party vote share would be considered a Republican seat, while any districts with more than 50% for Democratic two-party vote share would be considered a Democratic seat. This allowed me to predict the Democratic Party’s seat share at the national level.</p>
+<div id="model-justification-from-previous-literature" class="section level3">
+<h3>Model Justification from Previous Literature</h3>
+<p>For the generic ballot, I drew upon Gelman and King (1993) who found that the number of days left until the election matters for the accuracy of the polls. They state, “In most years, early public opinion polls give fairly miserable forecasts of the actual election outcome… Additionally, in virtually every presidential election in the last forty years, the polls converge to a point near the actual election outcome shortly before election day” (Gelman &amp; King, 1993). Thus, I decided to filter the generic ballot polling data for only polls 52 days away from or closer to the election because the closer the poll is to the actual election day, the more likely it is to be closer to the actual election result. The 52 day cutoff was chosen because I was limited by the data; the closest poll to election day in 1952 was 51.5 days.</p>
+<p>For GDP, I drew upon Achen and Bartels (2017) who analyzed the economic model of voting behavior of presidential races. They found that, “it is possible to account for recent presidential election outcomes with a fair degree of precision solely on the basis of how long the incumbent party had been in power and how much real income growth voters experienced in the six months leading up to Election Day.” This led them to argue that this evidence challenges the idea that citizens are rational retrospective voters and instead argued that, “while they vote on the basis of how they feel at the moment, they forget or ignore how they felt over the course of the incumbents’ term in office” (Achen &amp; Bartels, 2017). Thus, I decided to use the GDP percent difference from Q6 to Q7 to account for this behavior in voters. I chose GDP over RDI because in my exploration, I found that GDP was better at explaining House elections, whereas RDI Was better at explaining presidential elections.</p>
+<p>For the incumbency variables, I wanted to text Adam Brown (2014)’s research. House of Representatives incumbents in the United States enjoy electoral and structural advantages such as media coverage and campaign finance access. However, Adam Brown points out that “existing research has not asked whether individual voters actually prefer incumbents over newcomers, other things being equal.” Thus, he ran a randomized survey experiment to test this and found that “voters respond only minimally—if at all—to incumbency status once the structural advantages are held constant” (Brown, 2014). This is perhaps contrary to many people’s initial thoughts, especially when it comes to the commonly-held notion that voters like their local congressperson just because they are their local congressperson.</p>
+<p>For previous Democratic vote share, I used this variable based on research of voter behavior and party identification. For the expert prediction, I used the average of these three organizations because I had data for all the districts and they all used the 7-point scale where 1 is Solid Democrat, 2 is Lean Democrat, 3 is Tilt Democrat, 4 is Toss-Up, 5 is Tilt Republican, 6 is Lean Republican, and 7 is Solid Democrat.</p>
+</div>
+<div id="model-results" class="section level3">
+<h3>Model Results</h3>
 <pre><code>## 
 ## Pooled Linear Regression Model of Democratic Two-Party Vote Share
 ## ========================================================================
@@ -116,13 +133,48 @@
 ## ========================================================================
 ## Note:                                        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
 </div>
+<div id="interpretation-of-coefficients" class="section level3">
+<h3>Interpretation of Coefficients</h3>
+<p>All of the coefficients are statistically significant at the 99% confidence level.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Generic ballot:</strong> The coefficient is <strong>0.282</strong>, which means that for every percent increase in the generic ballot, there is a 0.282% increase in the Democratic two-party vote share.</li>
+<li><strong>GDP % Difference from Q6-Q7</strong>: The coefficient is <strong>-0.119</strong>, which means that for every percent increase in the GDP difference from Q6 to Q7, there is a 0.119% decrease in the Democratic two-party vote share. At first glance, this might seem interesting because one might assume that a better-performing economy would benefit Democrats. However, the economy and if it does well is often attributed to Republicans.</li>
+<li><strong>Democratic Incumbent in District</strong>: The coefficient is <strong>3.022</strong>, which means that if the incumbent in the district is a Democrat, the Democratic two-party vote share is 3.022% greater than if the incumbent is NOT a Democrat. This makes sense because incumbents tend to win their elections compared to non-incumbents and contributes to the commonly-held belief that incumbency can explain most of the elections.</li>
+<li><strong>Democratic Party is in Power in House</strong>: The coefficient is <strong>-1.939</strong>, which means that if the party controlling the House at the time of the election is the Democratic party, the Democratic two-party vote share is 1.939% less than if the Democratic party was NOT controlling the House. This was the most interesting incumbency variable because the other two (district and President) followed commonly-held notions. This perhaps argues that it is better for democrats at the district level if the Democrats are not controlling the House.</li>
+<li><strong>Democratic President is in Power</strong>: The coefficient is <strong>-3.495</strong>, which means that if the president is a Democrat at the time of the election, the Democratic two-party vote share is 3.495% less than if the president was NOT a Democrat. This contributes to the long-held notion that the President’s party is punished during midterm elections.</li>
+<li><strong>Previous Democratic Two-Party Vote Share</strong>: The coefficient is <strong>0.328</strong>, which means that every percent increase in previous Democratic two-party vote share is associated with a 0.328% increase in the Democratic two-party vote share for the current election.</li>
+<li><strong>Expert Ratings </strong>: The coefficient is <strong>-4.442</strong>, which means that as the district becomes more Republican (7 is solid Republican), this is associated with a 4.442% decrease in the Democratic two-party vote share.</li>
+</ol>
+</div>
+<div id="model-validation" class="section level3">
+<h3>Model Validation</h3>
+<p>The adjusted R-squared of the model is 0.720 which indicates that the independent variables explain 72% of the variation. Considering that some of my earlier blogs had negative adjusted R-squared values, I am relatively at peace with this adjusted R-squared.</p>
+</div>
 </div>
 <div id="predictions-for-the-2022-house-midterms" class="section level2">
 <h2>Predictions for the 2022 House Midterms</h2>
-<p><img src="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/index_files/figure-html/prediction%20graph-1.png" width="672" /></p>
-<div id="lower-and-upper-bounds-of-predictions" class="section level3">
-<h3>Lower and Upper Bounds of Predictions</h3>
-<p><img src="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/index_files/figure-html/histogram%20of%20predictions-1.png" width="672" /></p>
+<p>Using my Democratic two-party vote share model at the district level, I was also able to predict the Democratic seat share at the national level by assigning districts with less than or equal to 50% as Republican seats and more than 50% as Democratic seats.</p>
+<p><strong>Thus, I predict that Democrats will win 216 seats, while the Republicans will win 219 seats, resulting in a Republican victory in the House of Representatives.</strong></p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/index_files/figure-html/2022%20prediction%20map-1.png" width="672" /></p>
+<p>Here is a map of the predicted 2022 Democratic vote shares by districts. The districts that are more red have a lower Democratic vote share, thus I predict them to be Republican seats. The districts that are more blue have a higher Democratic vote share, thus I predict them to be Democratic seats. The districts that are more white are more toss-up seats.</p>
+<div id="predictive-interval-of-predictions" class="section level3">
+<h3>Predictive Interval of Predictions</h3>
+<p>I created a predictive interval of my predictions at the 95% confidence interval.</p>
+<p><img src="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/index_files/figure-html/histograms%20of%20lower/upper%20bound-1.png" width="672" /></p>
+<p>At the lower bound, I predict that Democrats will win 213 seats, while the Republicans will win 222 seats, resulting in a larger Republican victory than my prediction.</p>
+<p>At the upper bound, I predict that Democrats will win 218 seats, while the Republicans will win 217 seats, resulting in the narrowest of Democratic victory in the House.</p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This final model is a culmination of more than 8 weeks of learning and exploring. There was a lot of trial and error throughout this time, but I am overall happy with the work that I have put into this class and my final model. I look forward to seeing how my model holds up to the actual results on Tuesday, November 8. However, whether or not my model was accurate, I am still impressed that I was able to even create a model, especially considering where I started from in terms of skill and knowledge.</p>
+<p>There are limitations with my model that range from data constrictions (doing at the district level is HARD) and statistical inference choices (was pooled model the best model?). Nonetheless, I look forward to unpacking these limitations in the reflective paper after Election Day.</p>
+<div id="sources" class="section level3">
+<h3>Sources</h3>
+<p>Christopher H Achen and Larry M Bartels. Democracy for Realists: Why Elections Do Not Produce Responsive Government, volume 4. Princeton University Press, 2017.
+Adam R. Brown. Voters Don’t Care Much About Incumbency. Journal of Experimental Political Science, 1(2):132–143, 2014.
+Andrew Gelman and Gary King. Why are American presidential election campaign polls so variable when votes are so predictable? British Journal of Political Science, 23(4): 409–451, 1993.</p>
 </div>
 </div>
 
@@ -141,7 +193,7 @@
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-11-07 06:59:53.225276 -0500 EST m=&#43;0.309282585">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-11-07 08:53:35.841455 -0500 EST m=&#43;0.344366929">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
