@@ -57,7 +57,8 @@ state_dists <- unique(district_model_2022$st_cd_fips)
 ```
 
 ## Pooled Model
-```{r, include = FALSE}
+From section slides, I learned that a pool model captures correlation across districts by assuming one set of parameters for all districts to predict each district’s outcome. The benefit of the pooled model is that it relies on less data from each district by “drawing strength” on less data-sparse districts. This was really important to learn as one of the biggest barriers that I have been facing is dealing with less data-sparse districts in my district-level modeling. Thus, I present my pooled model below. 
+```{r model code, include = FALSE}
 models <- list()
 r2 <- c()
 preds <- c()
@@ -94,7 +95,7 @@ for (sd in state_dists){
 output <- tibble(state_dists, preds, r2, coeff_gdp, coeff_incumb, coeff_support, coeff_interaction)
 ```
 
-```{r, include = FALSE}
+```{r testing, include = FALSE}
 # lol pooled is just all districts linear regression model
 all <- lm(DemVotesMajorPercent ~ average_support + gdp_percent_difference + incumb + gdp_percent_difference*incumb, data = district_model_data)
 
@@ -108,23 +109,42 @@ pooled_gdp <- plm(DemVotesMajorPercent ~ gdp_percent_difference, data = district
 pooled_incumb <- plm(DemVotesMajorPercent ~ incumb, data = district_model_data, model = "pooling")
 ```
 
-```{r, warning = FALSE}
-stargazer(pooled, pooled_incumb, type = "text")
+```{r pooled model, warning = FALSE}
+stargazer(pooled, 
+          type = "text",
+          title = "Pooled Linear Regression Model of Democratic Two-Party Vote Share",
+          dep.var.labels = "Democratic Two-Party Vote Share",
+          covariate.labels = c("Generic Ballot for Democrats",
+                               "GDP % Difference from Q6-Q7",
+                               "Democratic Incumbent in District",
+                               "Interaction between GDP and Incumbency"))
 ```
 
-```{r}
+The overall adjusted R squared of this model is 0.544, which is one of the better in-sample evaluations that I have had with a model this semester. 
+
+```{r r squared graph, warning = FALSE}
 # r squared
 ggplot(output, aes(x = r2)) +
   geom_histogram(bins = 30, color = "white") +
   theme_few() +
   labs(title = "R-Squared Values for Models in Each District",
-       subtitle = "House Districts",
+       subtitle = "435 House Districts",
        x = "R-Squared",
        y = "Count")
+```
 
+Above, is a distribution of the R squared values by district and compared to last week’s model of voter turnout, this histogram looks more normal and possible. The majority of the R squared values fall between 0 and 1. 
+
+Let’s now take a look at the coefficients. For this week’s pooled model, I decided to explore these variables:
+1. Average Generic Ballot Score for Democrats
+2. GDP % Difference from Q6-Q7
+3. Democratic Incumbency
+4. Interaction between Generic ballot and GDP
+
+```{r coefficient graphs, warning = FALSE}
 # gdp
-ggplot(output, aes(x = coeff_gdp)) +
-  geom_histogram(bins = 30, color = "white") + xlim(-100, 100) + 
+p1 <- ggplot(output, aes(x = coeff_gdp)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-30, 30) + 
   geom_vline(xintercept = median(output$coeff_gdp, na.rm = TRUE),
              color = "red", size = 1) + 
   theme_few() +
@@ -133,7 +153,7 @@ ggplot(output, aes(x = coeff_gdp)) +
   ylim(0, 50)
 
 # generic ballot
-ggplot(output, aes(x = coeff_support)) +
+p2 <- ggplot(output, aes(x = coeff_support)) +
   geom_histogram(bins = 30, color = "white") + xlim(-5, 5) +  
   geom_vline(xintercept = median(output$coeff_support, na.rm = TRUE),
              color = "red", size = 1) + 
@@ -143,32 +163,47 @@ ggplot(output, aes(x = coeff_support)) +
   ylim(0, 80)
 
 # incumbency
-ggplot(output, aes(x = coeff_incumb)) +
-  geom_histogram(bins = 30, color = "white") + xlim(-10, 10) +  
+p3 <- ggplot(output, aes(x = coeff_incumb)) +
+  geom_histogram(bins = 30, color = "white") + xlim(-5, 10) +  
   geom_vline(xintercept = median(output$coeff_incumb, na.rm = TRUE),
              color = "red", size = 1) + 
   theme_few() +
-  labs(x = "Generic Ballot Coefficient",
+  labs(x = "Incumbency Coefficient",
        y = "Count") +
-  ylim(0, 130)
+  ylim(0, 10)
+
+grid.arrange(p1, p2, p3)
 ```
 
-```{r}
+All variables were statistically significant at p<0.01, except the interaction. As expected, the model shows that as the generic ballot increases by 1 percentage point, Democratic two-party vote share is expected to increase by 0.515 percentage point. In addition, districts with a Democratic incumbent are expected to have a Democratic two-party vote share of 35.945 percentage points more than districts without a Democratic incumbent. However, I am a bit skeptical about how large the difference is. I think this might have occurred because of the way I coded incumbency and the pooled model overfitting for incumbency as a result. This could explain the more sporadic nature of the incumbency coefficient graph. I will address incumbency in my future models in a different way. On the other hand, the model shows that as GDP differences increase by 1 percentage point, the Democratic two-party vote share is expected to decrease by 0.104 percentage point. 
+
+## Predictions
+Below is the distribution of the 435 districts’ Democratic two-party vote share based on this pooled model. 
+
+```{r predictions, include = FALSE}
 preds_df <- tibble(state_dists, preds)
 
 length(preds[preds <= 50]) # 212 Republican seats
 length(preds[preds > 50]) # 223 Democrat seats
+```
 
+```{r prediction graph, warning = FALSE}
 ggplot(output %>% mutate(preds = ifelse(preds > 100, 100, preds),
                                         preds = ifelse(preds < 0, 0, preds)), 
        aes(x = preds)) +
-  geom_histogram(bins = 30, color = "white") +
+  geom_histogram(bins = 30, color = "white", fill = "skyblue3") +
+  geom_vline(xintercept = 50, color = "red", size = 1) +
   theme_few() +
-  labs(title = "2022 Election Predictions - Turnout Model",
-       subtitle = "Average Turnout",
+  labs(title = "2022 Election Predictions - Pooled Model",
        x = "Democratic Two-Party Vote-Share (%)",
        y = "Count") +
   xlim(-5, 105) +
   ylim(0,50)
 ```
 
+This week, I predict that the **Republicans will win 212 seats**, while the **Democrats will win 223 seats**, which would result in a Democratic victory in the House. This is definitely an interesting prediction. 
+
+My gut feeling does not really necessarily agree with this prediction. Thus, in future models, I plan on readdressing the incumbency variable (perhaps creating multiple incumbency variables at the district-level, House level, and Presidency level) and perhaps adding other variables because my current variables only explain 54.4% of the possible variation. However, I do see a value in using a pooled model because it helps me deal with the data-sparse districts. 
+
+Source:
+Christopher H Achen and Larry M Bartels. Democracy for Realists: Why Elections Do Not Produce Responsive Government, volume 4. Princeton University Press, 2017.

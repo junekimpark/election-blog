@@ -30,47 +30,53 @@ Persistence</p>
 </div>
 <div id="pooled-model" class="section level2">
 <h2>Pooled Model</h2>
+<p>From section slides, I learned that a pool model captures correlation across districts by assuming one set of parameters for all districts to predict each district’s outcome. The benefit of the pooled model is that it relies on less data from each district by “drawing strength” on less data-sparse districts. This was really important to learn as one of the biggest barriers that I have been facing is dealing with less data-sparse districts in my district-level modeling. Thus, I present my pooled model below.</p>
 <pre><code>## 
-## ========================================================================================
-##                                                  Dependent variable:                    
-##                               ----------------------------------------------------------
-##                                                  DemVotesMajorPercent                   
-##                                           (1)                           (2)             
-## ----------------------------------------------------------------------------------------
-## average_support                         0.515***                                        
-##                                         (0.029)                                         
-##                                                                                         
-## gdp_percent_difference                  -0.104**                                        
-##                                         (0.052)                                         
-##                                                                                         
-## incumb                                 35.945***                     35.955***          
-##                                         (0.283)                       (0.269)           
-##                                                                                         
-## gdp_percent_difference:incumb            -0.108                                         
-##                                         (0.070)                                         
-##                                                                                         
-## Constant                               10.584***                     35.235***          
-##                                         (1.427)                       (0.199)           
-##                                                                                         
-## ----------------------------------------------------------------------------------------
-## Observations                             15,498                       15,498            
-## R2                                       0.544                         0.535            
-## Adjusted R2                              0.544                         0.535            
-## F Statistic                   4,627.711*** (df = 4; 15493) 17,829.100*** (df = 1; 15496)
-## ========================================================================================
-## Note:                                                        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<pre><code>## Warning: Removed 4 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre><code>## Warning: Removed 3 rows containing non-finite values (stat_bin).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
-<pre><code>## Warning: Removed 400 rows containing non-finite values (stat_bin).</code></pre>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_vline).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
-<pre><code>## [1] 212</code></pre>
-<pre><code>## [1] 223</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+## Pooled Linear Regression Model of Democratic Two-Party Vote Share
+## ======================================================================
+##                                              Dependent variable:      
+##                                        -------------------------------
+##                                        Democratic Two-Party Vote Share
+## ----------------------------------------------------------------------
+## Generic Ballot for Democrats                      0.515***            
+##                                                    (0.029)            
+##                                                                       
+## GDP % Difference from Q6-Q7                       -0.104**            
+##                                                    (0.052)            
+##                                                                       
+## Democratic Incumbent in District                  35.945***           
+##                                                    (0.283)            
+##                                                                       
+## Interaction between GDP and Incumbency             -0.108             
+##                                                    (0.070)            
+##                                                                       
+## Constant                                          10.584***           
+##                                                    (1.427)            
+##                                                                       
+## ----------------------------------------------------------------------
+## Observations                                       15,498             
+## R2                                                  0.544             
+## Adjusted R2                                         0.544             
+## F Statistic                             4,627.711*** (df = 4; 15493)  
+## ======================================================================
+## Note:                                      *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>The overall adjusted R squared of this model is 0.544, which is one of the better in-sample evaluations that I have had with a model this semester.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/r%20squared%20graph-1.png" width="672" /></p>
+<p>Above, is a distribution of the R squared values by district and compared to last week’s model of voter turnout, this histogram looks more normal and possible. The majority of the R squared values fall between 0 and 1.</p>
+<p>Let’s now take a look at the coefficients. For this week’s pooled model, I decided to explore these variables:
+1. Average Generic Ballot Score for Democrats
+2. GDP % Difference from Q6-Q7
+3. Democratic Incumbency
+4. Interaction between Generic ballot and GDP</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/coefficient%20graphs-1.png" width="672" /></p>
+<p>All variables were statistically significant at p&lt;0.01, except the interaction. As expected, the model shows that as the generic ballot increases by 1 percentage point, Democratic two-party vote share is expected to increase by 0.515 percentage point. In addition, districts with a Democratic incumbent are expected to have a Democratic two-party vote share of 35.945 percentage points more than districts without a Democratic incumbent. However, I am a bit skeptical about how large the difference is. I think this might have occurred because of the way I coded incumbency and the pooled model overfitting for incumbency as a result. This could explain the more sporadic nature of the incumbency coefficient graph. I will address incumbency in my future models in a different way. On the other hand, the model shows that as GDP differences increase by 1 percentage point, the Democratic two-party vote share is expected to decrease by 0.104 percentage point.</p>
+</div>
+<div id="predictions" class="section level2">
+<h2>Predictions</h2>
+<p>Below is the distribution of the 435 districts’ Democratic two-party vote share based on this pooled model.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/prediction%20graph-1.png" width="672" /></p>
+<p>This week, I predict that the <strong>Republicans will win 212 seats</strong>, while the <strong>Democrats will win 223 seats</strong>, which would result in a Democratic victory in the House. This is definitely an interesting prediction.</p>
+<p>My gut feeling does not really necessarily agree with this prediction. Thus, in future models, I plan on readdressing the incumbency variable (perhaps creating multiple incumbency variables at the district-level, House level, and Presidency level) and perhaps adding other variables because my current variables only explain 54.4% of the possible variation. However, I do see a value in using a pooled model because it helps me deal with the data-sparse districts.</p>
+<p>Source:
+Christopher H Achen and Larry M Bartels. Democracy for Realists: Why Elections Do Not Produce Responsive Government, volume 4. Princeton University Press, 2017.</p>
 </div>
