@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Post Election Reflection &middot; June Park&#39;s Election Analytics Blog</title>
+
+		
+		<link rel="stylesheet" href="/election-blog/css/style.css">
+		<link rel="stylesheet" href="/election-blog/css/fonts.css">
+		
+		<link rel="icon" href="/election-blog/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/election-blog/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/election-blog/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/election-blog/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="June Park&#39;s Election Analytics Blog" />
+
+		<script src="/election-blog/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">June Park&#39;s Election Analytics Blog</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        June Park
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-11-20 00:00:00 &#43;0000 UTC">November 20, 2022</time>
+</div>
+
+		<h1 class="post-title">Post Election Reflection</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This week, I reflect on my predictive model for the 2022 House of Representatives elections based on the actual results of the 2022 elections. To summarize, I predicted that the Democrats would win 216 seats, while the Republicans would win 219 seats, resulting in a slim Republican majority in the House of Representatives. After reflecting on and analyzing my model based on the actual results, I find that my nationwide results (216 vs 219 seats) is actually quite close to the actual results (213 vs 219; 4 seats uncalled as of November 22, 2022), but my district-by-district results were not so accurate.</p>
+</div>
+<div id="recapping-my-2022-prediction-model" class="section level2">
+<h2>Recapping my 2022 prediction model</h2>
+<p>For a more in-depth description and discussion about my model, please visit <a href="https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/">my last blog post</a>.</p>
+<p>Here I will present a short summary of my model: I ran a pooled linear regression model for each of the 435 districts to predict the Democratic two-party vote share at the district level. Then, I aggregated the data so that any districts with less than or equal to 50% for Democratic two-party vote share would be considered a Republican seat, while any districts with more than 50% for Democratic two-party vote share would be considered a Democratic seat. This allowed me to predict the Democratic Party’s seat share at the national level.</p>
+<p>My independent variables were:
+1. Generic Ballot
+2. GDP % Difference
+3. Dem Incumbent in District
+4. Dem Party is in Power in House
+5. Dem President is in Power
+6. Previous Dem Two Party Vote Share
+7. Expert Ratings</p>
+<p>Using my model, I predicted that the <strong>Democrats would win 216 seats, while the Republicans would win 219 seats</strong>, resulting in a slim Republican majority in the House of Representatives.</p>
+<p>My <strong>lower bound</strong> at the 95% confidence level predicted that Democrats would win 213 seats, while the Republicans would win 222 seats, resulting in a larger Republican victory than my prediction.</p>
+<p>My <strong>upper bound</strong> predicted that Democrats would win 218 seats, while the Republicans would win 217 seats, resulting in the slimmest Democratic victory possible.</p>
+<pre><code>## [1] 14.85908</code></pre>
+<pre><code>## # A tibble: 45 × 4
+##    State      District `Actual Dem Vote Share` `Predicted Dem Vote Share`
+##    &lt;chr&gt;      &lt;chr&gt;                      &lt;dbl&gt;                      &lt;dbl&gt;
+##  1 Arizona    04                          56.1                       48.4
+##  2 Arizona    09                           0                         66.9
+##  3 California 04                          67.5                       35.1
+##  4 California 05                          38.4                       79.6
+##  5 California 08                          75.7                       17.1
+##  6 California 13                          49.6                       68.5
+##  7 California 20                          32.5                       79.6
+##  8 California 27                          45.8                       66.3
+##  9 California 40                          42.8                       57.0
+## 10 California 42                          66.8                       31.4
+## # … with 35 more rows</code></pre>
+</div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-11-22 13:35:49.383185 -0500 EST m=&#43;0.230567913">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

@@ -250,6 +250,10 @@ length(preds[preds <= 50]) # 219 seats for Republicans
 
 # To be able to graph my predictions
 preds_ggplot <- as.data.frame(preds)
+
+# FOR POST ELECTION REFLECTION
+# preds_2022 <- data.frame(state_dists, preds)
+# write.csv(preds_2022, "preds_2022.csv")
 ```
 
 ## Predictions for the 2022 House Midterms

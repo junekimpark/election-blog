@@ -1,0 +1,172 @@
+---
+title: Post Election Reflection
+author: June Park
+date: '2022-11-20'
+slug: []
+categories: []
+tags: []
+---
+
+```{r libraries, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+library(ggthemes)
+library(gridExtra)
+library(plm)
+library(usdata)
+library(ggrepel)
+library(usmap)
+library(tigris)
+library(boot)
+library(Metrics)
+```
+
+```{r data, include = FALSE}
+# read in data
+headers <- read_csv("2022_4_0_3.csv", col_names = FALSE, n_max = 1)
+dat <- read_csv("2022_4_0_3.csv", skip = 2, col_names = FALSE)
+colnames(dat) <- headers
+district_names <- read_csv("district_names.csv")
+```
+
+```{r from enos, include = FALSE}
+## hand enter MA, ME, and MS
+dat[dat$FIPS == 25901,'Democratic'] = 153081; dat[dat$FIPS == 25901,'Republican'] = 96415
+dat[dat$FIPS == 25902,'Democratic'] = 177519; dat[dat$FIPS == 25902,'Republican'] = 90791
+dat[dat$FIPS == 25903,'Democratic'] = 145379; dat[dat$FIPS == 25903,'Republican'] = 82568
+dat[dat$FIPS == 25904,'Democratic'] = 0; dat[dat$FIPS == 25904,'Republican'] = 0
+dat[dat$FIPS == 25905,'Democratic'] = 198126; dat[dat$FIPS == 25905,'Republican'] = 70570
+dat[dat$FIPS == 25906,'Democratic'] = 189753; dat[dat$FIPS == 25906,'Republican'] = 107384
+dat[dat$FIPS == 25907,'Democratic'] = 144902; dat[dat$FIPS == 25907,'Republican'] = 26481
+dat[dat$FIPS == 25908,'Democratic'] = 184076; dat[dat$FIPS == 25908,'Republican'] = 80961
+dat[dat$FIPS == 25909,'Democratic'] = 192941; dat[dat$FIPS == 25909,'Republican'] = 131774
+
+dat[dat$FIPS == 23901,'Democratic'] = 218630; dat[dat$FIPS == 23901,'Republican'] = 128996
+dat[dat$FIPS == 23902,'Democratic'] = 151440; dat[dat$FIPS == 23902,'Republican'] = 140895
+
+dat[dat$FIPS == 28901,'Democratic'] = 44387; dat[dat$FIPS == 28901,'Republican'] = 119673
+dat[dat$FIPS == 28902,'Democratic'] = 107071; dat[dat$FIPS == 28902,'Republican'] = 71380
+dat[dat$FIPS == 28903,'Democratic'] = 51628; dat[dat$FIPS == 28903,'Republican'] = 126081
+dat[dat$FIPS == 28904,'Democratic'] = 39292; dat[dat$FIPS == 28904,'Republican'] = 122128
+
+## LA and FL races with no reporting b/c no contest
+dat[dat$FIPS == 22904,'Democratic'] = 0; dat[dat$FIPS == 22904,'Republican'] = 0
+dat[dat$FIPS == 12905,'Democratic'] = 0; dat[dat$FIPS == 12905,'Republican'] = 0
+
+# hard coded results for Utah's 3rd district
+dat[dat$FIPS == 49903,'Democratic'] = 82865; dat[dat$FIPS == 49903,'Republican'] = 181141
+
+# 3 races do NOT have any election information in this data set
+  # 1205 : Florida 5th
+  # 2204 : Louisiana 4th
+  # 2504 : Massachusetts 4th
+# reflectiondf %>% 
+  # filter(is.na(DemVotesMajorPercent))
+```
+
+```{r cleaning data, include = FALSE}
+# add leading 0 to create st_cd_fips
+dat <- dat %>% 
+  clean_names() %>% 
+  mutate(cd = ifelse(geographic_name == "At Large", "00", cd)) %>%
+  mutate(st_cd_fips = paste0(str_pad(state_fips, 2, pad = "0"), cd))
+
+# selecting columns
+# creating DemVotesMajorPercent
+dat <- dat %>% 
+  select(st_cd_fips, geographic_name, total_vote, rankd, rankr,
+         democratic, republican, ca_democratic, ca_republican) %>% 
+  mutate(democratic_all = democratic + ca_democratic,
+         republican_all = republican + ca_republican, 
+         twopartyvote = democratic_all + republican_all,
+         DemVotesMajorPercent = democratic_all / twopartyvote * 100)
+
+# hard code DemVotesMajorPercent for 3 districts (that originally had NAs in DemVotesMajorPercent)
+# Florida 5th
+dat[dat$st_cd_fips == 1205,'DemVotesMajorPercent'] = 0
+
+# Louisiana 4th
+dat[dat$st_cd_fips == 2204,'DemVotesMajorPercent'] = 0
+
+# Massachusetts 4th
+dat[dat$st_cd_fips == 2504,'DemVotesMajorPercent'] = 100
+dat[dat$st_cd_fips == 2504,'rankd'] = 1 # to indicate the Democrat won
+
+```
+
+## Introduction
+This week, I reflect on my predictive model for the 2022 House of Representatives elections based on the actual results of the 2022 elections. To summarize, I predicted that the Democrats would win 216 seats, while the Republicans would win 219 seats, resulting in a slim Republican majority in the House of Representatives. After reflecting on and analyzing my model based on the actual results, I find that my nationwide results (216 vs 219 seats) is actually quite close to the actual results (213 vs 219; 4 seats uncalled as of November 22, 2022), but my district-by-district results were not so accurate.
+
+```{r adding my predictions, include = FALSE}
+# reading and cleaning in my 2022 predictions
+preds_2022 <- read_csv("preds_2022.csv")
+preds_2022 <- preds_2022 %>% 
+  rename(st_cd_fips = state_dists)
+
+# combining actual results and my predictions
+reflectiondf <- left_join(dat, preds_2022, by = "st_cd_fips")
+
+# filter out 8 districts that somehow weren't calculated in my model LOL
+# manually compute their numbers later using my model equation
+reflectiondf_cleaned <- reflectiondf %>% 
+  filter(!is.na(preds))
+```
+
+## Recapping my 2022 prediction model
+For a more in-depth description and discussion about my model, please visit [my last blog post](https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/). 
+
+Here I will present a short summary of my model: I ran a pooled linear regression model for each of the 435 districts to predict the Democratic two-party vote share at the district level. Then, I aggregated the data so that any districts with less than or equal to 50% for Democratic two-party vote share would be considered a Republican seat, while any districts with more than 50% for Democratic two-party vote share would be considered a Democratic seat. This allowed me to predict the Democratic Party’s seat share at the national level.
+
+My independent variables were:
+1. Generic Ballot
+2. GDP % Difference
+3. Dem Incumbent in District
+4. Dem Party is in Power in House
+5. Dem President is in Power
+6. Previous Dem Two Party Vote Share
+7. Expert Ratings
+
+Using my model, I predicted that the **Democrats would win 216 seats, while the Republicans would win 219 seats**, resulting in a slim Republican majority in the House of Representatives. 
+
+My **lower bound** at the 95% confidence level predicted that Democrats would win 213 seats, while the Republicans would win 222 seats, resulting in a larger Republican victory than my prediction. 
+
+My **upper bound** predicted that Democrats would win 218 seats, while the Republicans would win 217 seats, resulting in the slimmest Democratic victory possible. 
+
+```{r}
+# Root Mean Squared Error = 14.85908
+rmse(reflectiondf_cleaned$DemVotesMajorPercent, reflectiondf_cleaned$preds)
+
+# HOW MANY DISTRICTS DID I PREDICT WRONG
+wrong_districts <- reflectiondf_cleaned %>% 
+  mutate(DemWinnerActual = ifelse(DemVotesMajorPercent > 50, 1, 0),
+         DemWinnerPredicted = ifelse(preds > 50, 1, 0),
+         MissedDistricts = ifelse(DemWinnerActual != DemWinnerPredicted, 1, 0)) %>% 
+  select(st_cd_fips,
+         DemVotesMajorPercent,
+         preds,
+         DemWinnerActual,
+         DemWinnerPredicted,
+         MissedDistricts) %>% 
+  filter(MissedDistricts == 1)
+
+left_join(wrong_districts, district_names, by = "st_cd_fips") %>% 
+  select(state, district_num, DemVotesMajorPercent, preds) %>% 
+  rename(State = state,
+         District = district_num,
+         "Actual Dem Vote Share" = DemVotesMajorPercent,
+         "Predicted Dem Vote Share" = preds)
+```
+
