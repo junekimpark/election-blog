@@ -6,13 +6,13 @@
     <description>Recent content in Posts on June Park&#39;s Election Analytics Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 20 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 21 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://junekimpark.github.io/election-blog/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Post Election Reflection</title>
-      <link>https://junekimpark.github.io/election-blog/post/2022-11-20-post-election-reflection/</link>
-      <pubDate>Sun, 20 Nov 2022 00:00:00 +0000</pubDate>
+      <title>Post 2022 Election Reflection</title>
+      <link>https://junekimpark.github.io/election-blog/post/2022-11-21-post-2022-election-reflection/</link>
+      <pubDate>Mon, 21 Nov 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://junekimpark.github.io/election-blog/post/2022-11-20-post-election-reflection/</guid>
+      <guid>https://junekimpark.github.io/election-blog/post/2022-11-21-post-2022-election-reflection/</guid>
       <description>Introduction This week, I reflect on my predictive model for the 2022 House of Representatives elections based on the actual results of the 2022 elections. To summarize, I predicted that the Democrats would win 216 seats, while the Republicans would win 219 seats, resulting in a slim Republican majority in the House of Representatives. After reflecting on and analyzing my model based on the actual results, I find that my nationwide results (216 vs 219 seats) is actually quite close to the actual results (213 vs 219; 4 seats uncalled as of November 22, 2022), but my district-by-district results were not so accurate.</description>
     </item>
     

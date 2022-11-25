@@ -1,0 +1,227 @@
+---
+title: Post 2022 Election Reflection
+author: June Park
+date: '2022-11-21'
+slug: []
+categories: []
+tags: []
+---
+
+```{r libraries, include = FALSE}
+# hide stuff
+knitr::opts_chunk$set(echo = FALSE)
+
+# libraries
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(lubridate)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(leaflet)
+library(stringr)
+library(ggthemes)
+library(gridExtra)
+library(plm)
+library(usdata)
+library(ggrepel)
+library(usmap)
+library(tigris)
+library(boot)
+library(Metrics)
+```
+
+```{r data, include = FALSE}
+# read in data
+headers <- read_csv("2022_4_0_3.csv", col_names = FALSE, n_max = 1)
+dat <- read_csv("2022_4_0_3.csv", skip = 2, col_names = FALSE)
+colnames(dat) <- headers
+district_names <- read_csv("district_names.csv")
+```
+
+```{r from enos, include = FALSE}
+## hand enter MA, ME, and MS
+dat[dat$FIPS == 25901,'Democratic'] = 153081; dat[dat$FIPS == 25901,'Republican'] = 96415
+dat[dat$FIPS == 25902,'Democratic'] = 177519; dat[dat$FIPS == 25902,'Republican'] = 90791
+dat[dat$FIPS == 25903,'Democratic'] = 145379; dat[dat$FIPS == 25903,'Republican'] = 82568
+dat[dat$FIPS == 25904,'Democratic'] = 0; dat[dat$FIPS == 25904,'Republican'] = 0
+dat[dat$FIPS == 25905,'Democratic'] = 198126; dat[dat$FIPS == 25905,'Republican'] = 70570
+dat[dat$FIPS == 25906,'Democratic'] = 189753; dat[dat$FIPS == 25906,'Republican'] = 107384
+dat[dat$FIPS == 25907,'Democratic'] = 144902; dat[dat$FIPS == 25907,'Republican'] = 26481
+dat[dat$FIPS == 25908,'Democratic'] = 184076; dat[dat$FIPS == 25908,'Republican'] = 80961
+dat[dat$FIPS == 25909,'Democratic'] = 192941; dat[dat$FIPS == 25909,'Republican'] = 131774
+
+dat[dat$FIPS == 23901,'Democratic'] = 218630; dat[dat$FIPS == 23901,'Republican'] = 128996
+dat[dat$FIPS == 23902,'Democratic'] = 151440; dat[dat$FIPS == 23902,'Republican'] = 140895
+
+dat[dat$FIPS == 28901,'Democratic'] = 44387; dat[dat$FIPS == 28901,'Republican'] = 119673
+dat[dat$FIPS == 28902,'Democratic'] = 107071; dat[dat$FIPS == 28902,'Republican'] = 71380
+dat[dat$FIPS == 28903,'Democratic'] = 51628; dat[dat$FIPS == 28903,'Republican'] = 126081
+dat[dat$FIPS == 28904,'Democratic'] = 39292; dat[dat$FIPS == 28904,'Republican'] = 122128
+
+## LA and FL races with no reporting b/c no contest
+dat[dat$FIPS == 22904,'Democratic'] = 0; dat[dat$FIPS == 22904,'Republican'] = 0
+dat[dat$FIPS == 12905,'Democratic'] = 0; dat[dat$FIPS == 12905,'Republican'] = 0
+
+# hard coded results for Utah's 3rd district
+dat[dat$FIPS == 49903,'Democratic'] = 82865; dat[dat$FIPS == 49903,'Republican'] = 181141
+
+# 3 races do NOT have any election information in this data set
+  # 1205 : Florida 5th
+  # 2204 : Louisiana 4th
+  # 2504 : Massachusetts 4th
+# reflectiondf %>% 
+  # filter(is.na(DemVotesMajorPercent))
+```
+
+```{r cleaning data, include = FALSE}
+# add leading 0 to create st_cd_fips
+dat <- dat %>% 
+  clean_names() %>% 
+  mutate(cd = ifelse(geographic_name == "At Large", "00", cd)) %>%
+  mutate(st_cd_fips = paste0(str_pad(state_fips, 2, pad = "0"), cd))
+
+# selecting columns
+# creating DemVotesMajorPercent
+dat <- dat %>% 
+  select(st_cd_fips, geographic_name, total_vote, rankd, rankr,
+         democratic, republican, ca_democratic, ca_republican) %>% 
+  mutate(democratic_all = democratic + ca_democratic,
+         republican_all = republican + ca_republican, 
+         twopartyvote = democratic_all + republican_all,
+         DemVotesMajorPercent = democratic_all / twopartyvote * 100)
+
+# hard code DemVotesMajorPercent for 3 districts (that originally had NAs in DemVotesMajorPercent)
+# Florida 5th
+dat[dat$st_cd_fips == 1205,'DemVotesMajorPercent'] = 0
+
+# Louisiana 4th
+dat[dat$st_cd_fips == 2204,'DemVotesMajorPercent'] = 0
+
+# Massachusetts 4th
+dat[dat$st_cd_fips == 2504,'DemVotesMajorPercent'] = 100
+dat[dat$st_cd_fips == 2504,'rankd'] = 1 # to indicate the Democrat won
+
+```
+
+## Introduction
+This week, I reflect on my predictive model for the 2022 House of Representatives elections based on the actual results of the 2022 elections. To summarize, I predicted that the Democrats would win 216 seats, while the Republicans would win 219 seats, resulting in a slim Republican majority in the House of Representatives. After reflecting on and analyzing my model based on the actual results, I find that my nationwide results (216 vs 219 seats) is actually quite close to the actual results (213 vs 219; 4 seats uncalled as of November 22, 2022), but my district-by-district results were not so accurate.
+
+```{r adding my predictions, include = FALSE}
+# reading and cleaning in my 2022 predictions
+preds_2022 <- read_csv("preds_2022.csv")
+preds_2022 <- preds_2022 %>% 
+  rename(st_cd_fips = state_dists)
+
+# combining actual results and my predictions
+reflectiondf <- left_join(dat, preds_2022, by = "st_cd_fips")
+
+# filter out 8 districts that somehow weren't calculated in my model LOL
+# manually compute their numbers later using my model equation
+reflectiondf_cleaned <- reflectiondf %>% 
+  filter(!is.na(preds))
+```
+
+## Recapping my 2022 prediction model
+For a more in-depth description and discussion about my model, please visit [my last blog post](https://junekimpark.github.io/election-blog/post/2022-11-04-prediction-for-the-2022-house-midterms/). 
+
+Here I will present a short summary of my model: I ran a pooled linear regression model for each of the 435 districts to predict the Democratic two-party vote share at the district level. Then, I aggregated the data so that any districts with less than or equal to 50% for Democratic two-party vote share would be considered a Republican seat, while any districts with more than 50% for Democratic two-party vote share would be considered a Democratic seat. This allowed me to predict the Democratic Party’s seat share at the national level.
+
+My independent variables were:
+1. Generic Ballot
+2. GDP % Difference
+3. Dem Incumbent in District
+4. Dem Party is in Power in House
+5. Dem President is in Power
+6. Previous Dem Two Party Vote Share
+7. Expert Ratings
+
+Using my model, I predicted that the **Democrats would win 216 seats, while the Republicans would win 219 seats**, resulting in a slim Republican majority in the House of Representatives. 
+
+My **lower bound** at the 95% confidence level predicted that Democrats would win 213 seats, while the Republicans would win 222 seats, resulting in a larger Republican victory than my prediction. 
+
+My **upper bound** predicted that Democrats would win 218 seats, while the Republicans would win 217 seats, resulting in the slimmest Democratic victory possible. 
+
+## How accurate was my model?
+To calculate the accuracy of my model, I first calculated the root-mean-square error (RMSE) of my model. I got a **RMSE of 14.85908**, which indicates that the weighted average error between the predictors and the actuals is about 14.86%. Because Democratic two-party vote share ranged from 0 to 100, I think my RMSE is not horrible, but also not great. 
+
+I also looked at the accuracy of my district-level predictions. For context, I predicted a race to be won by a Democrat if the Democratic two-party vote share was above 50% and won by a Republican if the Democratic two-party vote share was below or equal to 50%. 
+
+Using this metric, I analyzed which districts I predicted incorrectly (i.e., I predicted a Democrat would win, but a Republican did and vice versa). **In total, I predicted 45 districts incorrectly.** The table below displays the 45 districts that I predicted incorrectly, the actual Democratic two-party vote share, my predicted Democratic two-party vote share, and the difference (Predicted - Actual). If the difference is positive, this means that I overestimated, and if the difference is negative, this means that I underestimated. 
+
+```{r RMSE, include = FALSE}
+# Root Mean Squared Error = 14.85908
+rmse(reflectiondf_cleaned$DemVotesMajorPercent, reflectiondf_cleaned$preds)
+```
+
+```{r error table}
+# HOW MANY DISTRICTS DID I PREDICT WRONG
+wrong_districts <- reflectiondf_cleaned %>% 
+  mutate(DemWinnerActual = ifelse(DemVotesMajorPercent > 50, 1, 0),
+         DemWinnerPredicted = ifelse(preds > 50, 1, 0),
+         MissedDistricts = ifelse(DemWinnerActual != DemWinnerPredicted, 1, 0)) %>% 
+  select(st_cd_fips,
+         DemVotesMajorPercent,
+         preds,
+         DemWinnerActual,
+         DemWinnerPredicted,
+         MissedDistricts) %>% 
+  filter(MissedDistricts == 1)
+
+error_table <- left_join(wrong_districts, district_names, by = "st_cd_fips") %>% 
+  mutate(Difference = preds - DemVotesMajorPercent) %>% 
+  select(state, district_num, DemVotesMajorPercent, preds, Difference) %>% 
+  rename(State = state,
+         District = district_num,
+         Actual = DemVotesMajorPercent,
+         Predicted= preds)
+
+# print error table
+print(error_table, n = 45)
+```
+
+The state that I predicted the most districts incorrectly was California (10) and then followed by Michigan (5) and Florida (4) and New York (4). I’m not entirely surprised that I predicted the New York districts incorrectly because of the massive redistricting that occurred that made my training data not as accurate since I was basing most of my predictions on pre-redistricted New York districts. This could be said the same of other states, like California, but perhaps to a lesser extent.
+
+At the national level, my prediction of 216 seats for the Democrats is not far off from the actual results of 213 seats for Democrats! I did much better at the national level than at the district level for predictions. 
+
+The discrepancy between my accuracy at the district and national level could be attributed to districts “canceling” each other out for a closer national seat share prediction. In other words, I might have predicted, incorrectly, a similar number of Democratic and Republican victories. I will further go in depth about other hypotheses I have to explain inaccuracies in my model. 
+
+## Potential hypotheses for why my model was inaccurate
+
+### Hypothesis 1: Nationwide variables could not explain the state by state variations
+In my model, the majority of my variables were nationwide variables, like generic ballot and GDP, while I only had two district-level variables, Democratic incumbency and expert ratings. However, it seems that red states became more red (ex: Texas and Florida), while blue states became more blue, although to a lesser extent. Thus, there was state by state variation perhaps caused by a variety of factors like ballot measures, abortion rights, and other important elections on the ballot that unfortunately my nationwide variables were not able to capture. 
+
+For example, on the issue of abortion, the [Kaiser Family Foundation’s supplemental question on the AP VoteCast](https://www.kff.org/other/poll-finding/2022-midterm-election-kff-ap-votecast-analysis/) found that “about a quarter of voters said the Court’s decision was the single most important factor in their midterm vote.” None of my nationwide variables, even generic ballot, were able to capture the effect of abortion rights on voters. In fact, the generic ballot closest to Election Day favored Republicans, but it seems that the overturning of Roe v. Wade inspired a wave of Democratic women and young voters to turn out. In key states, like Michigan and Pennsylvania, these voters were decisive in Democratic victories. 
+
+Furthermore, as much as House races were important, I think certain House races were influenced by other important elections on the ballot, like Senate races or Governor races. In Georgia, among Republican votes, there were split ticket votes where there were more votes for Brian Kemp for Governor than there were votes for Herschel Walker for Senator. This ticket-splitting may also have trickled down to the district level where although the generic ballot was more in favor of Republicans as it got closer to the election on the national level, this might not have exactly translated at the district level. I still believe the generic ballot is a crucial measure to include in predictive models, but I wished there was better district-level polling data that I could have used. 
+
+###Hypothesis 2: Youth voter turnout
+Perhaps I am a bit biased when it comes to the impact of the youth vote since I was the former co-chair of Harvard Votes Challenge, but it seems that the youth vote was critical in determining key races in the House. However, both my model and many pundits and experts were unfortunately unable to account for this crucial component, thus underestimating Democratic success. 
+
+According to the [Center for Information & Research on Civic Learning and Engagement (CIRCLE) at Tufts University’s Jonathan M. Tisch College of Civic Life](“https://circle.tufts.edu/latest-research/millions-youth-cast-ballots-decide-key-2022-races”), “27% of young people (ages 18-29) turned out to vote in the 2022 midterm election and helped decide critical races.” 2022’s youth voter turnout was the second highest, just behind 2018’s youth voter turnout, in the past 30 years. Furthermore, the youth vote was especially decisive in giving Democrats victories in close elections like in Pennsylvania and Wisconsin. For example, CIRCLE found that, “in the Wisconsin gubernatorial election, which CIRCLE had ranked as the #1 race where the youth vote could influence the outcome, Democratic Governor Tony Evers won reelection by a 3-point margin. Young voters gave Evers extraordinary support: 70% vs. 28% for Republican challenger Tim Michels.” The report goes on to say that, “nationally 63% of youth voted for a Democrat, and 35% voted for a Republican candidate to the U.S. House of Representatives.” 
+
+I originally did not use voter turnout as a variable because of its very complicated nature (I would need to predict voter turnout to then predict Democratic vote share) and in my prior explorations, found that it did not have much of an effect. However, I think if I had perhaps focused on just youth voter turnout, it could have been a better predictor in especially close districts, then just overall voter turnout. Although youth voter turnout cannot explain everything, I think this variable could have been extremely useful in the closest elections where even a 1% difference in prediction could have the Democrat or Republican winning, thus rendering my prediction correct or incorrect. 
+
+## Potential testing of hypotheses
+
+### Hypothesis 1: Nationwide variables could not explain the state by state variations
+If I had polling data on abortion rights for each district, I could perhaps test if voters who felt more affected by the overturning of Roe v. Wade turned out to vote at higher rates and voted for Democrats more than their counterparts. This could help isolate whether or not abortion was a shock that actually had an effect on Democratic two-party vote share. 
+
+For the effect of other races on the ballot, I would rerun my model with a variable that indicated if there were other statewide races on the ballot, for example, like a Senate race or a Gubernatorial race. Then I could compare the Democratic two-party vote share in districts that did have another important statewide race and districts that did not. 
+
+### Hypothesis 2: Youth voter turnout
+To test the effectiveness of youth voter turnout, I would probably subset the data to close elections where the winner won by up to 3%. Then, I would compare the youth vote total to the total vote margin to see if the youth voter turnout had an effect on the election outcome. It would also be cool to run simulations in the districts for Democratic two-party vote share depending on the total youth voter turnout. In particular, I would be interested to see how large of a youth voter turnout was necessary to give the Democrat the victory. 
+
+## What would I have done differently with my model?
+There are many ways to improve my model. First, I would have incorporated more district-level, or at least state-level, variables. For example, I would add a variable that indicated if there were other statewide races. I think Pennsylvania Democrats in House elections benefitted from there being crucial Governor and Senator races. I think this election cycle shows that America is growing further divided (perhaps becoming more entrenched in political ideology) and there needs to be nuanced analysis to be as accurate as possible if I’m trying to do a district-level analysis of all 435 districts.
+
+Second, I would have incorporated voter turnout into the model. Although very difficult to do, I think elections at this point are a question about who is turning out to vote, rather than if voters are being convinced by a certain candidate. I think I would have definitely liked to incorporate youth voter turnout for key elections, which leads into my next point. 
+
+Third, I would separate my data into uncontested and contested elections, perhaps even a separate category for highly contested elections, and run models separately for these categories. I think this may improve my accuracy at the district level. 
+
+## Conclusion
+This is now a wrap on my prediction and analysis of the 2022 House of Representatives election! I look forward to continue analyzing the election results as there is still much to do and continue to grow my data analysis skills :)
+
