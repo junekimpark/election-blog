@@ -1,0 +1,19 @@
+---
+title: Reflection on PA-07
+author: June Park
+date: '2022-12-07'
+slug: []
+categories: []
+tags: []
+---
+
+## Introduction of PA-07
+This semester, I closely paid attention to the election happening in **Pennsylvania’s 7th Congressional District**, which featured a rematch between Democratic incumbent, **Susan Wild**, and Republican challenger, **Lisa Scheller**. In the end, Susan Wild won re-election with about 51% of the vote to Lisa Scheller’s 49%. There was a vote margin of less than 6,000 votes! 
+
+### History of PA-07
+Due to the 2020 Census, Pennsylvania lost a seat in reapportionment and had to redraw their maps, which went into effect on February 23, 2022. Included in this process was the redistricting of PA-07, which made the district even **more competitive**.  In 2020, Joe Biden won PA-07 with 51.8% of the vote, compared to Donald Trump’s 47.0%. However, when [Daily Kos](https://www.dailykos.com/stories/2021/9/29/2055001/-Daily-Kos-Elections-2020-presidential-results-by-congressional-district-for-new-and-old-districts) calculated what the results of the 2020 presidential election would be based on the newly redistricted boundaries of PA-07, Biden would have received 49.7% of the vote in this district and Trump would have received 49.1%. Hence, the [2022 Cook Partisan Voter Index for PA-07](https://www.cookpolitical.com/cook-pvi/2022-partisan-voting-index) was R+2, which means that in the previous two presidential elections, this district’s results were 2 percentage points more Republican than the national average. **In short, the redistricting of PA-07 did NOT benefit Democratic incumbent, Susan Wild.** As a result, some pundits believed that either Wild would have an extremely difficult time winning re-election or would even lose. 
+
+In fact, PA-07 has an incredible history with redistricting. 
+
+### The 2022 version of PA-07
+The current 2022 version of PA-07 includes three full counties, Carbon, Lehigh, and Northampton, and small parts of Monroe County. The congressional district is about 70% white, 7.4% Black, 3.5% Asian, and 20.3% Hispanic. The median income in the district is $68,784. 
